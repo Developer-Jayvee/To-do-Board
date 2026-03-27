@@ -1,6 +1,17 @@
-import { type RouteConfig, index } from "@react-router/dev/routes";
-
+import {
+    type RouteConfig,
+    index,
+    layout,
+    route
+} from "@react-router/dev/routes";
+import { RoutePath } from "src/constants/routePaths";
 export default [
-    index("routes/home.tsx")
-
+    layout('./routes/GuestLayout.tsx',[
+        route(RoutePath.LOGIN,'pages/Login/LoginPage.tsx'),
+        route(RoutePath.REGISTER,'pages/Register/RegisterPage.tsx')
+    ]),
+    layout('./routes/AuthLayout.tsx',[
+        route(RoutePath.BOARD,'pages/Board/BoardPage.tsx'),
+        route(RoutePath.HISTORY,'pages/History/HistoryPage.tsx')
+    ])
 ] satisfies RouteConfig;

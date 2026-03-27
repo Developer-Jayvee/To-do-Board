@@ -1,4 +1,4 @@
-import { TOKEN_NAME } from "constant";
+import { TOKEN_NAME } from "src/constants";
 import axiosClient from "./axiosClient";
 import type { AxiosInstance } from "axios";
 
