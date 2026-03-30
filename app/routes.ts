@@ -4,10 +4,12 @@ import {
     layout,
     route
 } from "@react-router/dev/routes";
+import { redirect } from "react-router";
 import { RoutePath } from "src/constants/routePaths";
 export default [
     layout('./routes/GuestLayout.tsx',[
-        route(RoutePath.LOGIN,'pages/Login/LoginPage.tsx'),
+        index('pages/Login/LoginPage.tsx'),
+        // route(RoutePath.LOGIN,'pages/Login/LoginPage.tsx'),
         route(RoutePath.REGISTER,'pages/Register/RegisterPage.tsx')
     ]),
     layout('./routes/AuthLayout.tsx',[
