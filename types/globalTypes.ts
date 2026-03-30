@@ -5,7 +5,10 @@ export type RegisterFormDataTypes = {
     password : string;
     confirmPassword : string;
 }
-
+export interface LoginFormData {
+    username:string;
+    password:string;
+}
 export interface FloatingInputTypes {
     inputName:string;
     setInputValue?:( e :ChangeEvent<HTMLInputElement>) => void;
