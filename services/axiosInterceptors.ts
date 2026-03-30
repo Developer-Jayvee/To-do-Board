@@ -7,7 +7,7 @@ import type { AxiosInstance } from "axios";
 export const axiosInterceptors = (axiosClient: AxiosInstance) => {
     axiosClient.interceptors.request.use(
         (config) => {
-            const token = localStorage.get(TOKEN_NAME);
+            const token = localStorage.getItem(TOKEN_NAME);
             if(token){
                 config.headers.Authorization = `Bearer ${token}`;
             }

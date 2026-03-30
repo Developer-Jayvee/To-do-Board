@@ -1,7 +1,8 @@
+import type { ReactNode } from "react";
 
 
 interface AuthFormProps {
-    children: React.ReactNode;
+    children: ReactNode;
     title: string;
 }
 export default function AuthForm({

@@ -3,20 +3,61 @@ import "./login.css"
 import FloatingLabel from "components/ui/FloatingLabel";
 import Button from "components/ui/Button";
 import AuthForm from "components/ui/AuthForm";
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import { authApi } from "services/modules/authApi";
+import type { LoginFormData } from "types/globalTypes";
+import { useDispatch, useSelector } from "react-redux";
+import { type RootState } from "store";
+
+
+
 
 const LoginPage = () => {
+    const authState = useSelector((state: RootState) => state.auth);
+    const dispatch = useDispatch();
+    const [canLogin , setCanLogin] = useState<boolean>(false);
+    const [formData , setFormData] = useState<LoginFormData>({
+        username: "",
+        password: "",
+    });
+    useEffect(() => {
+        setCanLogin(formData.username.trim() !== "" && formData.password.trim() !== "");
+        
+    },[formData]);
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const action = confirm("Are you sure you want to login?");
+        if(!action) return;
+
+        const formData = new FormData(e.currentTarget);
+        const response = await authApi.login({
+            username: formData.get("username") as string,
+            password: formData.get("password") as string,
+        });
+        if (response) {
+            dispatch({ type: "auth/loginSuccess", payload: response });
+        }
+    }
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+    }
     return (
         <AuthForm title="Sign In">
-            <form className=" flex flex-col justify-center">
-               
+            <form className=" flex flex-col justify-center" onSubmit={handleSubmit}>
+
                 <h3 className="text-center text-sm font-thin mb-4">to continue to your account</h3>
                 <div className="mb-2">
-                    <FloatingLabel label="Username" />
+                    <FloatingLabel label="Username" inputName="username" setInputValue={(e) => handleInputChange(e)} />
                 </div>
                 <div className="mb-2">
-                    <FloatingLabel label="Password" isPassword={true} />
+                    <FloatingLabel label="Password" inputName="password" isPassword={true} setInputValue={(e) => handleInputChange(e)} />
                 </div>
-                <button type="button" className="p-1 mt-4 mb-[70px] bg-blue-600 text-white font-bold">SIGN IN</button>
+                <button type="submit" 
+                className={`p-1 mt-4 mb-[70px] bg-blue-600 text-white font-bold ${!canLogin ? 'opacity-50 bg-blue-400 cursor-not-allowed' : 'hover:bg-blue-700'}`}
+                disabled={!canLogin}
+                >
+                    SIGN IN</button>
             </form>
             <div className="relative">
                 <span className="absolute top-[-14px] left-1/2 transform -translate-x-1/2 bg-white px-2">or</span>
