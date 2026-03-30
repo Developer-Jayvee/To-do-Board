@@ -1,12 +1,12 @@
-.login-wrapper button:not(.custom){
-    border:1px solid black !important;
+.login-wrapper button:not(.custom) {
+  border: 1px solid black !important;
 }
-.login-wrapper button.custom{
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 5px 10px;
+.login-wrapper button.custom {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 10px;
 }
-.login-wrapper button.custom  img{
-    width: 30px;
+.login-wrapper button.custom img {
+  width: 30px;
 }

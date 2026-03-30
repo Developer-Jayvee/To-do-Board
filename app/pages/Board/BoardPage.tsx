@@ -1,13 +1,9 @@
-
-
-
 const BoardPage = () => {
-    return (
-        <>
-            <h1>Board</h1>
-        </>
-    )
-}
-
+  return (
+    <>
+      <h1>Board</h1>
+    </>
+  );
+};
 
 export default BoardPage;
