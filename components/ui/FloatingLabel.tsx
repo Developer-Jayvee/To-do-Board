@@ -11,6 +11,8 @@ export default function FloatingLabel({
   setInputValue,
   validateInput,
   attr,
+  hasError = false,
+  errors = "",
 }: FloatingLabelTypes) {
   const [isEyeOpen, setIsEyeOpen] = useState(false);
   if (isPassword) {
@@ -42,6 +44,11 @@ export default function FloatingLabel({
           onClick={() => setIsEyeOpen(false)}
           className={`z-3 absolute cursor-pointer bottom-0 right-0 ${isEyeOpen ? "block" : "hidden"}`}
         />
+        {hasError && (
+          <span className="text-red-500 text-sm mt-1">
+            {typeof errors === "string" ? errors : errors.join(",")}
+          </span>
+        )}
       </div>
     );
   }
@@ -61,6 +68,11 @@ export default function FloatingLabel({
       />
 
       <label className="font-light text-sm absolute">{label}</label>
+       {hasError && (
+          <span className="text-red-500 text-sm mt-1">
+            {typeof errors === "string" ? errors : errors.join(", ")}
+          </span>
+        )}
     </div>
   );
 }

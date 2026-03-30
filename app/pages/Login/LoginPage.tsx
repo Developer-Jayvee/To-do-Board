@@ -14,6 +14,7 @@ const LoginPage = () => {
   const authState = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch();
   const [canLogin, setCanLogin] = useState<boolean>(false);
+  const [loginError, setLoginError] = useState<string>("");
   const [formData, setFormData] = useState<LoginFormData>({
     username: "",
     password: "",
@@ -27,18 +28,24 @@ const LoginPage = () => {
     e.preventDefault();
     const action = confirm("Are you sure you want to login?");
     if (!action) return;
-
-    const formData = new FormData(e.currentTarget);
-    const response = await authApi.login({
-      username: formData.get("username") as string,
-      password: formData.get("password") as string,
-    });
-    if (response) {
-      dispatch({ type: "auth/loginSuccess", payload: response });
+    try {
+      const formData = new FormData(e.currentTarget);
+      const response = await authApi.login({
+        username: formData.get("username") as string,
+        password: formData.get("password") as string,
+      });
+      if (response) {
+        dispatch({ type: "auth/loginSuccess", payload: response });
+      }
+    } catch (error) {
+      if (error?.message) {
+        setLoginError(error?.message);
+      }
     }
   };
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    setLoginError("");
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
   return (
@@ -62,6 +69,9 @@ const LoginPage = () => {
             setInputValue={(e) => handleInputChange(e)}
           />
         </div>
+        {loginError && (
+          <p className="text-center text-red-500 text-sm mb-2">{loginError}</p>
+        )}
         <button
           type="submit"
           className={`p-1 mt-4 mb-[70px] bg-blue-600 text-white font-bold ${!canLogin ? "opacity-50 bg-blue-400 cursor-not-allowed" : "hover:bg-blue-700"}`}

@@ -4,7 +4,10 @@ import { useDeferredValue, useEffect, useState, type ChangeEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, redirect } from "react-router";
 import { authApi } from "services/modules/authApi";
-import type { RegisterFormDataTypes } from "types/globalTypes";
+import type {
+  RegisterFormDataTypes,
+  RegisterFormErrorsTypes,
+} from "types/globalTypes";
 import { validateEmail } from "utils/validations";
 
 const RegisterPage = () => {
@@ -18,11 +21,17 @@ const RegisterPage = () => {
     password: "",
     confirmPassword: "",
   });
+  const [errors, setErrors] = useState<RegisterFormErrorsTypes>({
+    name: [],
+    email: [],
+    username: [],
+    password: [],
+    confirmPassword: [],
+  });
   const deferredHasError = useDeferredValue(isPasswordMatch);
   const deferredEmailError = useDeferredValue(isEmailValid);
-  const authState = useSelector( (state: any) => state.auth);
+  const authState = useSelector((state: any) => state.auth);
   const dispatch = useDispatch();
-
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -35,32 +44,45 @@ const RegisterPage = () => {
   const handleSubmit = async () => {
     const action = confirm("Are you sure you want to register?");
     if (!action) return;
-    
+
     if (!isPasswordMatch && !canSubmit) return false;
-    const response = await authApi.register(formData);
-    if(response){
+    try {
+      const response = await authApi.register(formData);
+      if (response) {
         dispatch({ type: "auth/loginSuccess", payload: response });
+      }
+    } catch (err) {
+      const errorResponse = await err?.errors;
+      setErrors((prev) => ({
+        ...prev,
+        ...errorResponse,
+      }));
     }
   };
+
   useEffect(() => {
-    const { name, username, password, confirmPassword } = formData;
+    console.log(errors);
+  }, [errors]);
+  useEffect(() => {
     if (
-      name &&
-      username &&
-      password &&
-      confirmPassword &&
-      isPasswordMatch &&
-      validateEmail(formData.email)
+      formData.name.trim() !== "" &&
+      formData.username.trim() !== "" &&
+      formData.password.trim() !== "" &&
+      formData.confirmPassword.trim() !== "" &&
+      isPasswordMatch
     ) {
-      setCanSubmit(false);
-    } else {
       setCanSubmit(true);
+    } else {
+      setCanSubmit(false);
     }
-    if(formData.email.trim() !== ""){
-        setIsEmailValid( validateEmail(formData.email));
+    if (formData.email.trim() !== "") {
+      setIsEmailValid(validateEmail(formData.email));
     }
-    if(formData.password.trim() !== "" && formData.confirmPassword.trim() !== ""){
-        setIsPasswordMatch(formData.password === formData.confirmPassword);
+    if (
+      formData.password.trim() !== "" &&
+      formData.confirmPassword.trim() !== ""
+    ) {
+      setIsPasswordMatch(formData.password === formData.confirmPassword);
     }
   }, [formData]);
   return (
@@ -70,13 +92,16 @@ const RegisterPage = () => {
         customClassName="mb-3"
         inputName="name"
         setInputValue={(e) => handleInputChange(e)}
+        hasError={!!errors.name}
+        errors={errors.name}
       />
       <FloatingLabel
         label="Email"
         customClassName="mb-3"
         inputName="email"
         setInputValue={(e) => handleInputChange(e)}
-       
+        hasError={!!errors.email}
+        errors={errors.email}
       />
       {!deferredEmailError && (
         <span className="text-red-500 text-sm mb-2">Invalid email address</span>
@@ -86,22 +111,28 @@ const RegisterPage = () => {
         customClassName="mb-3"
         inputName="username"
         setInputValue={(e) => handleInputChange(e)}
+        hasError={!!errors.username}
+        errors={errors.username}
       />
       <FloatingLabel
-        attr={ {maxLength:10} }
+        attr={{ maxLength: 10 }}
         label="Password"
         isPassword={true}
         customClassName="mb-3"
         inputName="password"
         setInputValue={(e) => handleInputChange(e)}
+        hasError={!!errors.password}
+        errors={errors.password}
       />
       <FloatingLabel
-        attr={ {maxLength:10} }
+        attr={{ maxLength: 10 }}
         label="Confirm Password"
         isPassword={true}
         customClassName="mb-3"
         inputName="confirmPassword"
         setInputValue={(e) => handleInputChange(e)}
+        hasError={!!errors.confirmPassword}
+        errors={errors.confirmPassword}
       />
 
       {!deferredHasError && (

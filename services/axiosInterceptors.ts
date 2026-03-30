@@ -18,7 +18,9 @@ export const axiosInterceptors = (axiosClient: AxiosInstance) => {
     (response) => {
       return response?.data;
     },
-    (error) => Promise.reject(error),
+    (error) => {
+      return Promise.reject(error.response.data || error.message);
+    }
   );
 
   return axiosClient;
