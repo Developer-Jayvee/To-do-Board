@@ -1,21 +1,22 @@
-.input--wrapper input{
-    border-bottom: 1px solid rgba(0, 0, 0, 0.4);
-    z-index: 2;
+.input--wrapper input {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+  z-index: 2;
 }
-.input--wrapper label{
-    z-index: 1;
-    transition: transform .3s ease-in-out , font-size .3s ease-in-out;
-    transform: translateY(22px);
+.input--wrapper label {
+  z-index: 1;
+  transition:
+    transform 0.3s ease-in-out,
+    font-size 0.3s ease-in-out;
+  transform: translateY(22px);
 }
-.input--wrapper input:focus{
-    outline: none !important;
-    border-bottom: 1px solid black;
+.input--wrapper input:focus {
+  outline: none !important;
+  border-bottom: 1px solid black;
 }
 
 .input--wrapper input:focus + label,
-.input--wrapper input:not(:placeholder-shown)  ~  label
-{
-    transform: translateY(0);
-    font-size: 12px;
-    font-weight: 300;
+.input--wrapper input:not(:placeholder-shown) ~ label {
+  transform: translateY(0);
+  font-size: 12px;
+  font-weight: 300;
 }

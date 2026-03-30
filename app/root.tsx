@@ -13,12 +13,8 @@ import { Provider } from "react-redux";
 import store from "../store/index";
 
 export function meta({}: Route.MetaArgs) {
-  return [
-    { title: "To Do Board" },
-    { name: "description", content: "" },
-  ];
+  return [{ title: "To Do Board" }, { name: "description", content: "" }];
 }
-
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -30,9 +26,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <Provider store={store}>
-          {children}
-        </Provider>
+        <Provider store={store}>{children}</Provider>
         <ScrollRestoration />
         <Scripts />
       </body>
