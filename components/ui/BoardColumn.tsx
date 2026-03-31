@@ -13,12 +13,14 @@ interface BoardColumnHandlers {
 interface BoardColumnProps extends BoardColumnHandlers {
   title: string;
   divID: string;
+  parentID?: string;
   customClass?: string;
   children?: ReactNode;
 }
 export default function BoardColumn({
   title,
   divID,
+  parentID,
   customClass = "",
   dragOver,
   dropOver,
@@ -26,7 +28,6 @@ export default function BoardColumn({
 }: BoardColumnProps) {
   return (
     <div
-       
       className="board-column bg-gray-100 w-[300px] flex flex-col rounded-lg border-t-0 "
       onDragOver={(e: DragEvent<HTMLDivElement>) => dragOver?.(e)}
       onDrop={(e: DragEvent<HTMLDivElement>) => dropOver?.(e)}
@@ -36,7 +37,7 @@ export default function BoardColumn({
         <Plus className="cursor-pointer" />
       </div>
       <div
-       id={divID}
+        id={divID}
         className="ticket-list flex flex-col gap-2 px-1 py-2 rounded-2xl"
       >
         {children || ""}

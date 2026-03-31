@@ -1,0 +1,13 @@
+
+.inline--input {
+    margin-top: 10px;
+}
+.inline--input > label {
+    font-weight: 500;
+}
+.inline--input > label , input {
+    display: block;
+}
+.inline--input > input:not(input[type=text]:nth-of-type(1)) , select {
+    margin-left: 10px;
+}

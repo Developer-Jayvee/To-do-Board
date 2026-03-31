@@ -4,6 +4,10 @@ button {
   padding: 8px 20px;
   font-weight: 500;
 }
+button.btn-primary {
+    background-color: rgb(106, 29, 177);
+    color:white;
+}
 button.btn-success {
   background-color: #4CAF50;
   color: white;

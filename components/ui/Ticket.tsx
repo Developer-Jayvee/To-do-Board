@@ -1,8 +1,13 @@
 import { ChatLines } from "iconoir-react";
 import { useId, type ChangeEvent } from "react";
 
-
-export default function Ticket() {
+interface TicketProps {
+  title: string;
+  description?: string;
+}
+export default function Ticket({
+  title , description
+}: TicketProps) {
 
     const divID = useId();
     const startDrag = (e : React.DragEvent<HTMLDivElement>) => {
@@ -16,11 +21,11 @@ export default function Ticket() {
          }
          >
               <div className="ticket-header flex ">
-                <span className="ticket-title flex-1 text-xl font-medium">Task 1</span>
+                <span className="ticket-title flex-1 text-xl font-medium">{title}</span>
                 <span className="ticket-type bg-green-500 text-white px-4 py-1 rounded-2xl font-semibold text-sm">Bug</span>
               </div>
               <div className="ticket-body">
-                <p className="ticket-desc text-gray-500">Description of Task 1</p>
+                {/* <p className="ticket-desc text-gray-500">{description || ""}</p> */}
               </div>
               <div className="ticket-footer flex mt-2">
                 <div className="author flex-1">
