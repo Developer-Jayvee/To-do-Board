@@ -1,5 +1,16 @@
+import Navbar from "components/layout/Navbar";
+import Sidebar from "components/layout/Sidebar";
 import { Outlet } from "react-router";
 
 export default function AuthLayout() {
-  return <Outlet />;
+
+  return (
+    <> 
+      <Sidebar customClass="  border-r border-gray-300  bg-white"/>
+      <Navbar customClass="border-b border-gray-300 bg-white"/>
+      <div className="main-content ml-[250px] pt-[60px] p-4 min-h-screen">
+        <Outlet/>
+      </div>
+    </>
+  )
 }

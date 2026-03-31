@@ -1,0 +1,7 @@
+nav > * {
+    box-sizing: border-box;
+}
+.search-bar > input[type=text]{
+    padding-left: 40px;
+    width: 70%;
+}
