@@ -1,3 +1,9 @@
-const HistoryPage = () => {};
+const HistoryPage = () => {
+    
+    return(
+        <>
+        </>
+    )
+};
 
 export default HistoryPage;

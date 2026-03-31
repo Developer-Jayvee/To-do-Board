@@ -35,3 +35,22 @@ export interface FloatingLabelTypes
   isPassword?: boolean;
   customClassName?: string;
 }
+
+export interface TicketFormTypes  {
+    title : string;
+    description : string;
+    label_id: number;
+    expiration_date: string;
+}
+
+export interface TicketForm {
+  id: number;
+  code: string;
+  title: string;
+  description: string;
+  expiration_date: string;
+  label_id: number;
+  created_by: number;
+  created_at: string;
+  updated_at: string;
+}

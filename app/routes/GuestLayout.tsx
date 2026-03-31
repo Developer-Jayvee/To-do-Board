@@ -7,10 +7,10 @@ export default function GuestLayout() {
   const isAuthenticated = useSelector(
     (state: any) => state.auth.isAuthenticated,
   );
-
+  
   if (isAuthenticated === null) {
     return null;
   }
-
+  
   return !isAuthenticated ? <Outlet /> : <Navigate to="/board" replace />;
 }

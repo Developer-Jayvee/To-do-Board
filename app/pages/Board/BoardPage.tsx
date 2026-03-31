@@ -1,7 +1,14 @@
 import BoardColumn from "components/ui/BoardColumn";
+import Modal from "components/ui/Modal";
 import Ticket from "components/ui/Ticket";
 import { Plus } from "iconoir-react";
-import { createContext, useId } from "react";
+import { createContext, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
+import ModalContent from "./ModalContent";
+import { useDispatch, useSelector } from "react-redux";
+import { boardApi } from "services/modules/boardApi";
+import { type RootState } from "@reduxjs/toolkit/query";
+import { fetchTickets, getAllTickets } from "store/tickets/TicketSlice";
+import { type AppDispatch } from "store";
 
 // NOTES
 /*
@@ -22,11 +29,20 @@ STEPS ON CREATING DRAG AND DROP
 */
 export const TicketContext = createContext();
 const BoardPage = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const [isModalOpen, setModalOpen] = useState<boolean>(true);
+
+  useEffect(() =>{
+    dispatch(fetchTickets())
+  } ,[dispatch])
+  const tickets = useSelector(getAllTickets )
+
+
   const user = {};
   const openID = useId();
   const inprogressID = useId();
 
-  const dropOver = (e: any , divID : string) => {
+  const dropOver = (e: any, divID: string) => {
     e.preventDefault();
     const id = e.dataTransfer.getData("ticketID");
     const draggedDiv = document.getElementById(id);
@@ -38,31 +54,34 @@ const BoardPage = () => {
   return (
     <div className="grid grid-cols-1 gap-4">
       <div className="filters">
-        <button className="filter-btn btn-success">Create Task</button>
+        <button
+          className="filter-btn btn-success"
+          onClick={() => setModalOpen(false)}
+        >
+          Create Ticket
+        </button>
       </div>
       <div className="board-container flex no-wrap gap-[20px]">
-
         <BoardColumn
           title="Open"
           divID={openID}
           dragOver={(e) => dragOver(e)}
-          dropOver={(e) => dropOver(e , openID)}
+          dropOver={(e) => dropOver(e, openID)}
         >
           <TicketContext.Provider value={user}>
-            <Ticket />
+            {tickets.map( (data,keyIndex) => <Ticket key={keyIndex} title={data.title} description={data.description}/> )}
           </TicketContext.Provider>
         </BoardColumn>
 
-         <BoardColumn
+        <BoardColumn
           title="In-progress"
           divID={inprogressID}
           dragOver={(e) => dragOver(e)}
-          dropOver={(e) => dropOver(e , inprogressID)}
+          dropOver={(e) => dropOver(e, inprogressID)}
         />
-         
       </div>
+      <ModalContent closeModal={setModalOpen} isModalOpen={isModalOpen} />      
     </div>
   );
 };
-
 export default BoardPage;
