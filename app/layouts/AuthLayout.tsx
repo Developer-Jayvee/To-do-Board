@@ -8,7 +8,7 @@ export default function AuthLayout() {
     <> 
       <Sidebar customClass="  border-r border-gray-300  bg-white"/>
       <Navbar customClass="border-b border-gray-300 bg-white"/>
-      <div className="main-content ml-[250px] pt-[60px] p-4 min-h-screen">
+      <div className="main-content ml-[250px] pt-[80px] px-4 min-h-screen">
         <Outlet/>
       </div>
     </>

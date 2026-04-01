@@ -19,3 +19,6 @@ textarea{
   flex-shrink: 0;
   flex-basis: 300px;
 }
+input[type=text]{
+  padding-left: 10px;
+}

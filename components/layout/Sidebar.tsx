@@ -1,4 +1,4 @@
-import { Clock, Folder, GoogleDocs, Hashtag, KanbanBoard } from "iconoir-react";
+import { Clock, Folder, GoogleDocs, Hashtag, KanbanBoard, Settings } from "iconoir-react";
 import { useState } from "react";
 import { Link, useLocation } from "react-router";
 
@@ -53,27 +53,17 @@ export default function Sidebar({ customClass = "" }: SidebarProps) {
             <p className="text-left w-full pl-2 font-semibold">Management</p>
             <ul>
               <li
-                className={`w-full ${location.pathname === "/" ? activeLink : ""} py-2`}
+                className={`w-full ${location.pathname === "/configurations" ? activeLink : ""} py-2`}
               >
                 <Link
-                  to="/history"
+                  to="/configurations"
                   className="px-[20px] text-md flex items-center w-full "
                 >
-                  <Folder className=" mr-2" />
-                  <span className="align-middle">Categories</span>
+                  <Settings className=" mr-2" />
+                  <span className="align-middle">Configuration</span>
                 </Link>
               </li>
-                <li
-                className={`w-full ${location.pathname === "/" ? activeLink : ""} py-2`}
-              >
-                <Link
-                  to="/history"
-                  className="px-[20px] text-md flex items-center w-full "
-                >
-                  <Hashtag className=" mr-2" />
-                  <span className="align-middle">Labels</span>
-                </Link>
-              </li>
+             
             </ul>
           </li>
         </ul>

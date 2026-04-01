@@ -4,16 +4,16 @@ import {
   layout,
   route,
 } from "@react-router/dev/routes";
-import { redirect } from "react-router";
 import { RoutePath } from "src/constants/routePaths";
 export default [
-  layout("./routes/GuestLayout.tsx", [
+  layout("./layouts/GuestLayout.tsx", [
     index("pages/Login/LoginPage.tsx"),
     // route(RoutePath.LOGIN,'pages/Login/LoginPage.tsx'),
     route(RoutePath.REGISTER, "pages/Register/RegisterPage.tsx"),
   ]),
-  layout("./routes/AuthLayout.tsx", [
+  layout("./layouts/AuthLayout.tsx", [
     route(RoutePath.BOARD, "pages/Board/BoardPage.tsx"),
     route(RoutePath.HISTORY, "pages/History/HistoryPage.tsx"),
+    route(RoutePath.CONFIG,"pages/Config/ConfigPage.tsx")
   ]),
 ] satisfies RouteConfig;
