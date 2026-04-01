@@ -1,25 +1,15 @@
 import "./modalContent.css"
 import Modal from "components/ui/Modal"
 import { useEffect, useState, type ChangeEvent, type Dispatch, type FormEvent, type SetStateAction } from "react";
-import { useDispatch } from "react-redux";
-import { boardApi } from "services/modules/boardApi";
+import { useDispatch, useSelector } from "react-redux";
 import { BasicTicketForm } from "src/constants/initialStates";
 import { type AppDispatch } from "store";
-import { fetchTickets } from "store/tickets/TicketSlice";
-import type { TicketFormTypes } from "types/globalTypes";
+import { createTicket } from "store/tickets/TicketSlice";
+import type { TicketFormTypes , ModalContentActions , ModalContentProps , InputHandler} from "types/globalTypes";
 
 
-interface ModalContentActions {
-    submitModal ?: (e : FormEvent) => void;
-    closeModal ?: () => void;
-}
-interface ModalContentProps extends ModalContentActions{
-    isModalOpen : boolean;
-    modalDetails? : TicketFormTypes;
-    setModalOpen : Dispatch<SetStateAction<boolean>>;
-}
-type InputHandler = (e : ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
 export const ModalHeader = ({
+    isUpdate,
     closeModal,
     submitModal
 } : ModalContentActions) => {
@@ -27,7 +17,7 @@ export const ModalHeader = ({
         <>
             <div className="flex">
                 <button className="btn-default" onClick={closeModal}>Cancel</button>
-                <button className="btn-primary" onClick={submitModal}>Save</button>
+                <button className="btn-primary" onClick={submitModal}>{isUpdate ? 'Update' : 'Save'} </button>
             </div>
         </>
     )
@@ -49,9 +39,9 @@ export const ModalBody = (handleInput : InputHandler,formData : TicketFormTypes)
             <div className="inline--input">  &nbsp;  </div>
             <div className="inline--input ">
                 <label>Tag</label>
-                <select name="label_id" onChange={handleInput} required>
-                    <option>Select tag</option>
-                    <option value={1} selected={formData.label_id === 1}>Bug</option>
+                <select name="label_id" onChange={handleInput} value={formData.label_id} required>
+                    <option value="">Select tag</option>
+                    <option value={1}>Bug</option>
                 </select>
             </div>
 
@@ -73,11 +63,8 @@ const ModalContent = ({
     const handleSubmit = async () => {
         const action = confirm("Are you sure you want to proceed?");
         if(!action) return;
-        const response = await boardApi.create(formData);
-        if(response){
-            dispatch(fetchTickets());
-            setModalOpen(false);
-        }
+        dispatch(createTicket(formData));
+        setModalOpen(false);
     }
     const handleInputs = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement> ) => {
         const { name , value } = e.target;
@@ -91,14 +78,19 @@ const ModalContent = ({
     const closeModal = () => {
         setModalOpen(false);
         setFormData(BasicTicketForm);
+        
     }
     useEffect( () => {
         if(modalDetails){
+            const date = new Date(modalDetails.expiration_date);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, "0"); 
+            const day = String(date.getDate()).padStart(2, "0");
             setFormData({
                 title: modalDetails.title,
                 description: modalDetails.description,
                 label_id:modalDetails.label_id,
-                expiration_date: modalDetails.expiration_date
+                expiration_date:`${year}-${month}-${day}`
             });
         }
     },[modalDetails])
@@ -106,7 +98,7 @@ const ModalContent = ({
             size="XL"
             isModalOpen={isModalOpen}
             closeState={setModalOpen}
-            header={<ModalHeader closeModal={closeModal} submitModal={handleSubmit}/>}
+            header={<ModalHeader  closeModal={closeModal} submitModal={handleSubmit}/>}
             body={ModalBody(handleInputs,formData)}
             />
 }

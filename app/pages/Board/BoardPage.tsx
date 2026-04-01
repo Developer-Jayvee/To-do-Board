@@ -10,7 +10,7 @@ import ModalContent from "./ModalContent";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTickets, getAllTickets } from "store/tickets/TicketSlice";
 import { type AppDispatch } from "store";
-import type { TicketForm, TicketFormPartial, TicketFormTypes } from "types/globalTypes";
+import type { TicketFormTypes } from "types/globalTypes";
 import { BasicTicketForm } from "src/constants/initialStates";
 
 // NOTES
@@ -52,15 +52,11 @@ const BoardPage = () => {
     })
     setModalOpen(true)
   }
-
   useEffect(() => {
     dispatch(fetchTickets());
   }, [dispatch]);
 
-  useEffect( () => {
-    console.log(isModalOpen);
-    
-  } ,[isModalOpen])
+ 
   return (
     <div className="grid grid-cols-1 gap-4">
       <div className="filters">
