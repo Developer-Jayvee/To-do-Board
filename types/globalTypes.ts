@@ -69,3 +69,18 @@ export interface ModalContentProps extends ModalContentActions{
     setModalOpen : Dispatch<SetStateAction<boolean>>;
 }
 export type InputHandler = (e : ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
+
+
+export interface CategoryReturnForm {
+  id:number;
+  code : string;
+  title: string;
+  sort: number;
+  created_by:number;
+  created_at?: string;
+  updated_at?:string;
+}
+export interface CategoryForm {
+  title: string;
+}
+export type ConfigType = "C" | "L" | "";
