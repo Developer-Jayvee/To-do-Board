@@ -54,3 +54,5 @@ export interface TicketForm {
   created_at: string;
   updated_at: string;
 }
+
+export type TicketFormPartial = Partial<TicketFormTypes>
