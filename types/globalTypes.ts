@@ -1,4 +1,4 @@
-import { type ChangeEvent, type InputHTMLAttributes } from "react";
+import { type ChangeEvent, type Dispatch, type FormEvent, type InputHTMLAttributes, type SetStateAction } from "react";
 export type RegisterFormDataTypes = {
   name: string;
   email: string;
@@ -56,3 +56,16 @@ export interface TicketForm {
 }
 
 export type TicketFormPartial = Partial<TicketFormTypes>
+
+
+export interface ModalContentActions {
+    isUpdate? : boolean;
+    submitModal ?: (e : FormEvent) => void;
+    closeModal ?: () => void;
+}
+export interface ModalContentProps extends ModalContentActions{
+    isModalOpen : boolean;
+    modalDetails? : TicketFormTypes;
+    setModalOpen : Dispatch<SetStateAction<boolean>>;
+}
+export type InputHandler = (e : ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;

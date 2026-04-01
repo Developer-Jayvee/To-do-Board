@@ -1,6 +1,7 @@
 export const BasicTicketForm = {
   title: "",
   description: "",
-  label_id: 1,
+  label_id: 0,
   expiration_date: "",
 };
+
