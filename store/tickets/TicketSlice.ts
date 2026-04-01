@@ -16,7 +16,7 @@ const initialState: TicketSliceState = {
   loading:false
 };
 export const fetchTickets = createAsyncThunk("ticket/getTickets", async () => {
-  const response = await boardApi.fetch();
+const response = await boardApi.fetch();
   return response ?? [];
 });
 export const updateTicket = createAsyncThunk<

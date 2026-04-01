@@ -1,8 +1,10 @@
+
 export const RoutePath = {
   LOGIN: "/login",
   REGISTER: "/register",
   BOARD: "/board",
   HISTORY: "/history",
+  CONFIG: "/configurations"
 } as const;
 
 export const Links = {

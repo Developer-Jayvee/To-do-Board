@@ -48,7 +48,7 @@ export default function Modal({
       <div
         className={`modal-container bg-white py-2  rounded-[5px] ${modalSize}  flex flex-col `}
       >
-        <div className="modal-header px-2 py-1 border-b border-gray-300 flex items-center justify-end gap-3 ">
+        <div className={`modal-header px-2 py-1 border-b border-gray-300 flex items-center justify-end gap-3 ${header ? '' : 'hidden'}`}>
           {header || (
             <>
                 <ArrowEmailForward className="cursor-pointer" />
