@@ -1,8 +1,9 @@
 import { EditPencil, Plus, Trash } from "iconoir-react";
+import type { ConfigType } from "types/globalTypes";
 
 
 interface TableLabelHandlers {
-    onOpenModal?: (type: string) => void;
+    onOpenModal?: (type: ConfigType) => void;
 }
 interface TableLabelProps extends TableLabelHandlers {
 
@@ -20,7 +21,7 @@ export default function TableLabels({
               </div>
               <div className="content  p-3 ">
                <div className="filter">
-                        <button className="btn-primary flex items-center gap-2" onClick={() => onOpenModal?.("Label")}>
+                        <button className="btn-primary flex items-center gap-2" onClick={() => onOpenModal?.("L")}>
                           <span><Plus/></span>
                           Add Label
                           </button>

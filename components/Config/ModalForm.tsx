@@ -1,29 +1,60 @@
 import { Xmark } from "iconoir-react";
-import type { Dispatch, SetStateAction } from "react";
+import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
+import { inititalCategoryFormState } from "src/constants/initialStates";
+import useInputHandler from "src/hooks/useInputHandler";
+import type { CategoryForm } from "types/globalTypes";
 
 interface ModalFormHandlers {
-    setToOpen: Dispatch<SetStateAction<boolean>>;
+  setToOpen: Dispatch<SetStateAction<boolean>>;
+  onButtonSubmit?: (e: SubmitEvent) => void;
 }
-interface ModalFormProps extends ModalFormHandlers {
-    title: string;
+interface ModalFormProps<T> extends ModalFormHandlers {
+  title: string;
+  initialState: T;
+  setFormInputs: Dispatch<SetStateAction<T>>;
+  formInput:T;
 }
-export default function ModalForm({
-    title , setToOpen
-} : ModalFormProps){
-    return (
-        <div className="flex flex-col">
-            <div className="header border-b border-gray-300 pb-2 flex justify-between items-center">
-                <p className="text-lg font-semibold">Create New {title}</p>
-                <Xmark className="cursor-pointer" onClick={() => setToOpen(false)}/>
-            </div>
-            <form className="mt-4 px-2">
-                <div className="input--wrapper ">
-                    <label className="font-medium block mb-2 ">Description</label>
-                    <input type="text" className="border w-full py-1" placeholder="Input description" />
-                </div>
-                <button className="btn-primary my-2 w-full"> Submit </button>
-            </form>
+export default function ModalForm<T>({
+  title,
+  setToOpen,
+  initialState,
+  setFormInputs,
+  formInput,
+  onButtonSubmit,
+}: ModalFormProps<T>) {
+  const [formData, setFormData] = useState<T>(initialState);
+  const { handleInput } = useInputHandler<T>({
+    setState: setFormInputs,
+  });
 
+//   useEffect(() => {
+//     setFormInputs(formData);
+//   }, [formData]);
+  return (
+    <div className="flex flex-col">
+      <div className="header border-b border-gray-300 pb-2 flex justify-between items-center">
+        <p className="text-lg font-semibold">Create New {title}</p>
+        <Xmark className="cursor-pointer" onClick={() => setToOpen(false)} />
+      </div>
+      <form className="mt-4 px-2" onSubmit={(e) => onButtonSubmit?.(e)}>
+        <div className="input--wrapper ">
+          <label className="font-medium block mb-2 ">Title</label>
+          <input
+            type="text"
+            className="border w-full py-1"
+            name="title"
+            placeholder="Input description"
+            onChange={handleInput}
+            value={formInput?.title}
+          />
         </div>
-    )
+        <button
+          className="btn-primary my-2 w-full"
+        >
+          {" "}
+          Submit{" "}
+        </button>
+      </form>
+    </div>
+  );
 }

@@ -2,27 +2,75 @@ import ModalForm from "components/Config/ModalForm";
 import TableCategories from "components/Config/TableCategories";
 import TableLabels from "components/Config/TableLabels";
 import Modal from "components/ui/Modal";
-import { useState } from "react";
-
+import { useEffect } from "react";
+import { inititalCategoryFormState } from "src/constants/initialStates";
+import { useConfigHandlers } from "src/hooks/useConfigHandlers";
+import type { ConfigType } from "types/globalTypes";
 
 export default function ConfigPage() {
-  const [isModalOpen,setModalOpen] = useState<boolean>(false);
-  const [modalTitle, setModalTitle] = useState<string>("Category");
-  const createData = (type : string) => {
-    setModalTitle(type)
-    setModalOpen(true);
-  }
+  const {
+    createData,
+    handleSubmit,
+    handleUpdate,
+    handleDelete,
+    openModalOnUpdate,
+    fetchList,
+    resetAll,
+    isModalOpen,
+    setModalOpen,
+    categoryList,
+    setCategoryList,
+    modalTitle,
+    setModalTitle,
+    configType,
+    setConfigType,
+    formData,
+    setFormData,
+    initialState,
+    setInitialState,
+    currentID,
+    setCurrentID,
+  } = useConfigHandlers();
+
+  useEffect(() => {
+    fetchList();
+  }, []);
+  useEffect(() => {
+    if (!isModalOpen) {
+      setFormData(inititalCategoryFormState);
+    }
+  }, [isModalOpen]);
+  useEffect(() => {
+    setModalTitle(configType == "C" ? "Category" : "Label");
+  }, [configType]);
+
   return (
     <>
       <div className="grid lg:grid-cols-2 grid-cols-1 gap-[20px]">
-          <TableCategories onOpenModal={(type : string) => createData(type)} />
-          <TableLabels onOpenModal={(type : string) => createData(type)}/>
+        <TableCategories
+          onOpenModal={(type: ConfigType) => createData(type)}
+          onUpdate={(id: number, type: ConfigType) =>
+            openModalOnUpdate(id, type)
+          }
+          onDelete={(id: number, type: ConfigType) => handleDelete(id, type)}
+          categoryList={categoryList}
+        />
+        <TableLabels onOpenModal={(type: ConfigType) => createData(type)} />
       </div>
-      <Modal 
+      <Modal
         size="M"
         isModalOpen={isModalOpen}
         closeState={setModalOpen}
-        body={ <ModalForm title={modalTitle} setToOpen={setModalOpen}/>}
+        body={
+          <ModalForm
+            title={modalTitle}
+            setToOpen={setModalOpen}
+            initialState={initialState}
+            setFormInputs={setFormData}
+            formInput={formData}
+            onButtonSubmit={(e: SubmitEvent) => handleSubmit(e)}
+          />
+        }
       />
     </>
   );
