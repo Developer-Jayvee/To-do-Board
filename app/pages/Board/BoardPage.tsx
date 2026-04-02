@@ -1,17 +1,13 @@
 import BoardColumn from "components/ui/BoardColumn";
 import Ticket from "components/ui/Ticket";
-import {
-  createContext,
-  useEffect,
-  useId,
-  useState,
-} from "react";
+import { createContext, useEffect, useId, useState } from "react";
 import ModalContent from "./ModalContent";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTickets, getAllTickets } from "store/tickets/TicketSlice";
 import { type AppDispatch } from "store";
 import type { TicketFormTypes } from "types/globalTypes";
 import { BasicTicketForm } from "src/constants/initialStates";
+import { useConfigHandlers } from "src/hooks/useConfigHandlers";
 
 // NOTES
 /*
@@ -32,31 +28,51 @@ STEPS ON CREATING DRAG AND DROP
 */
 export const TicketContext = createContext();
 const BoardPage = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const tickets = useSelector(getAllTickets);
-  const [isModalOpen, setModalOpen] = useState<boolean>(false);
-  const [formData , setFormData] = useState<TicketFormTypes>(BasicTicketForm)
   const user = {};
-  const openID = useId();
-  const inprogressID = useId();
+  const dispatch = useDispatch<AppDispatch>();
+  const categories = useSelector(getAllTickets);
+  const [isModalOpen, setModalOpen] = useState<boolean>(false);
+  const [formData, setFormData] = useState<TicketFormTypes>(BasicTicketForm);
+  const [currentID, setCurrentID] = useState<number | null>(null);
+  const { setConfigType, fetchConfigList, categoryList, configType } = useConfigHandlers();
 
-  const handleTicketOpen = (id : number) => {
-    const details = tickets.find( (val:any) => val.id === id);
-    if(!details) return;
-    
+  const handleTicketOpen = (id: number, catID: number) => {
+    const category = categories
+      .find((category: any) => category.id === catID)
+      ?.tickets.find((ticket: any) => ticket.id === id);
+    if (!category) return;
+    setCurrentID(id);
     setFormData({
-      title:details.title,
-      description: details.description,
-      label_id:details.label_id,
-      expiration_date: details.expiration_date
-    })
-    setModalOpen(true)
-  }
+      title: category.title,
+      description: category.description,
+      label_id: category.label_id,
+      category_id:0,
+      expiration_date: category.expiration_date,
+    });
+    setModalOpen(true);
+  };
+
   useEffect(() => {
     dispatch(fetchTickets());
   }, [dispatch]);
 
- 
+  useEffect(() => {
+    setConfigType("C");
+  }, []);
+
+  useEffect(() => {
+    fetchConfigList();
+  }, [configType]);
+
+  useEffect( () => {
+    console.log(categories);
+    
+  },[categories]);
+  useEffect(() => {
+    if (!isModalOpen) {
+      setCurrentID(null);
+    }
+  }, [isModalOpen]);
   return (
     <div className="grid grid-cols-1 gap-4">
       <div className="filters">
@@ -67,34 +83,34 @@ const BoardPage = () => {
           Create Ticket
         </button>
       </div>
-      <div className="board-container flex no-wrap gap-[20px]">
-        <BoardColumn
-          title="Open"
-          divID={openID}
-          // dragOver={(e) => dragOver(e)}
-          // dropOver={(e) => dropOver(e, openID)}
-        >
-          <TicketContext.Provider value={user}>
-            {tickets.map((data, keyIndex) => (
-              <Ticket
-                id={data?.id}
-                onOpen={ () => handleTicketOpen(data?.id)}
-                key={keyIndex}
-                title={data.title}
-                description={data.description}
-              />
-            ))}
-          </TicketContext.Provider>
-        </BoardColumn>
-
-        <BoardColumn
-          title="In-progress"
-          divID={inprogressID}
-          // dragOver={(e) => dragOver(e)}
-          // dropOver={(e) => dropOver(e, inprogressID)}
-        />
+      <div className="board-container flex no-wrap gap-5">
+        <TicketContext.Provider value={user}>
+          {categories.map((parentVal: any, parentIndex: number) => (
+            <BoardColumn
+              key={parentIndex}
+              title={parentVal?.title}
+              // dragOver={(e) => dragOver(e)}
+              // dropOver={(e) => dropOver(e, openID)}
+            >
+              {parentVal?.tickets?.map((childVal: any, childIndex: number) => (
+                <Ticket
+                  id={childVal?.id}
+                  onOpen={() => handleTicketOpen(childVal?.id, parentVal?.id)}
+                  key={childIndex}
+                  title={childVal.title}
+                  description={childVal.description}
+                />
+              ))}
+            </BoardColumn>
+          ))}
+        </TicketContext.Provider>
       </div>
-      <ModalContent setModalOpen={setModalOpen} isModalOpen={isModalOpen} modalDetails={formData} />
+      <ModalContent
+        currentID={currentID}
+        setModalOpen={setModalOpen}
+        isModalOpen={isModalOpen}
+        modalDetails={formData}
+      />
     </div>
   );
 };

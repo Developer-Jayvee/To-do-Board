@@ -4,7 +4,9 @@ export const BasicTicketForm = {
   title: "",
   description: "",
   label_id: 0,
+  category_id:26,
   expiration_date: "",
+  created_by: 1
 };
 export const inititalCategoryReturnState: CategoryReturnForm[] = [
   {

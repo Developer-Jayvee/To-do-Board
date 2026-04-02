@@ -35,24 +35,38 @@ export interface FloatingLabelTypes
   isPassword?: boolean;
   customClassName?: string;
 }
+export interface TimeStamps {
+  created_at ?:string;
+  updated_at?:string;
+}
 
 export interface TicketFormTypes  {
+    code ?: string;
     title : string;
     description : string;
     label_id: number;
+    category_id : number;
     expiration_date: string;
+    created_by ?: number;
 }
 
-export interface TicketForm {
-  id: number;
-  code: string;
+export interface TicketForm extends TimeStamps {
+  id ?: number;
+  code ?: string;
   title: string;
   description: string;
   expiration_date: string;
   label_id: number;
-  created_by: number;
-  created_at: string;
-  updated_at: string;
+  category_id : number;
+  created_by ?: number;
+}
+export interface CategoryForm extends TimeStamps {
+  id:number;
+  code:string;
+  title:string;
+  sort:number;
+  created_by:number;
+  tickets: TicketForm[]
 }
 
 export type TicketFormPartial = Partial<TicketFormTypes>
@@ -64,6 +78,7 @@ export interface ModalContentActions {
     closeModal ?: () => void;
 }
 export interface ModalContentProps extends ModalContentActions{
+    currentID ?: number | null;
     isModalOpen : boolean;
     modalDetails? : TicketFormTypes;
     setModalOpen : Dispatch<SetStateAction<boolean>>;
@@ -71,14 +86,12 @@ export interface ModalContentProps extends ModalContentActions{
 export type InputHandler = (e : ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
 
 
-export interface CategoryReturnForm {
+export interface CategoryReturnForm extends Partial<TimeStamps> {
   id:number;
   code : string;
   title: string;
   sort: number;
   created_by:number;
-  created_at?: string;
-  updated_at?:string;
 }
 export interface CategoryForm {
   title: string;
@@ -101,3 +114,11 @@ export interface TableCategoriesProps extends TableCategoriesHandlers {
 
 export type TableLabelHandlers = TableCategoriesHandlers;
 export type TableLabelsProps = TableCategoriesProps
+export interface ProgressProps {
+  from:number;
+  to: number;
+}
+export type ProgressFormData = {
+  formData : ProgressProps;
+  id: number;
+}

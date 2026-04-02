@@ -1,6 +1,6 @@
 import axiosClient from "services/axiosClient"
-import { PREFIX_TICKET } from "src/constants/prefix"
-import type { TicketFormPartial, TicketFormTypes } from "types/globalTypes";
+import { PREFIX_PROGRESS, PREFIX_TICKET } from "src/constants/prefix"
+import type { ProgressFormData, TicketFormPartial, TicketFormTypes } from "types/globalTypes";
 
 
 export const boardApi = {
@@ -15,5 +15,9 @@ export const boardApi = {
     fetch : async() => {
         const response = await axiosClient.get(PREFIX_TICKET);
         return response.data;
+    },
+    progress : async ({ formData , id }: ProgressFormData ) => {
+        const response = await axiosClient.put(`${PREFIX_PROGRESS}/${id}`,formData);
+        return response.data
     }
 }
