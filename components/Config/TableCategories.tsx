@@ -1,27 +1,34 @@
 import { EditPencil, Plus, Trash } from "iconoir-react";
-import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 import { configApi } from "services/modules/configApi";
-import {  inititalCategoryReturnState } from "src/constants/initialStates";
-import type { ConfigType , CategoryForm, CategoryReturnForm } from "types/globalTypes";
+import { inititalCategoryReturnState } from "src/constants/initialStates";
+import type {
+  ConfigType,
+  CategoryForm,
+  CategoryReturnForm,
+  TableCategoriesHandlers,
+  TableCategoriesProps,
+} from "types/globalTypes";
 
-interface TableCategoriesHandlers {
-    onOpenModal?: (type: ConfigType) => void;
-    create?: (data: CategoryForm) => void;
-    onUpdate?: (id: number , type : ConfigType) => void;
-    onDelete?: (id: number , type : ConfigType) => void;
-}
-interface TableCategoriesProps extends TableCategoriesHandlers {
-    categoryList: CategoryReturnForm[];
-}
 export default function TableCategories({
-    onOpenModal , onUpdate , onDelete ,categoryList
-} : TableCategoriesProps) {
-  
-    const [tableList , setTableList] = useState<CategoryReturnForm[]>(inititalCategoryReturnState);
- 
-    useEffect( () => {
-        setTableList(categoryList)
-    },[categoryList])
+  onOpenModal,
+  onUpdate,
+  onDelete,
+  configList,
+}: TableCategoriesProps) {
+  const [tableList, setTableList] = useState<CategoryReturnForm[]>(
+    inititalCategoryReturnState,
+  );
+
+  useEffect(() => {
+    setTableList(configList);
+  }, [configList]);
   return (
     <div className="w-full border border-gray-300 outline-0grid grid-col-1 gap-[10px]">
       <div className="col-span-1 border-b border-gray-300 p-2">
@@ -29,10 +36,15 @@ export default function TableCategories({
       </div>
       <div className="content  p-3 ">
         <div className="filter">
-          <button className="btn-primary flex items-center gap-2" onClick={() => onOpenModal?.("C")}>
-            <span><Plus/></span>
+          <button
+            className="btn-primary flex items-center gap-2"
+            onClick={() => onOpenModal?.("C")}
+          >
+            <span>
+              <Plus />
+            </span>
             Add Category
-            </button>
+          </button>
         </div>
         <div className=" py-4 overflow-x-auto">
           <div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
@@ -51,50 +63,52 @@ export default function TableCategories({
                 </tr>
               </thead>
               <tbody>
-                {
-                    tableList.length === 0 ? (
-                        <tr>
-                            <td colSpan={4} className="text-center italic text-gray-500">No data found</td>
-                        </tr>
-                    ) :
-                    tableList.map( (val : any) => (
-                        <tr>
-                        <td
-                            className="px-5 py-5 border-b border-gray-200 bg-white text-sm"
+                {tableList.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={4}
+                      className="text-center italic text-gray-500"
+                    >
+                      No data found
+                    </td>
+                  </tr>
+                ) : (
+                  tableList.map((val: any) => (
+                    <tr>
+                      <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                        <p className="text-gray-900 whitespace-no-wrap">
+                          {val?.title}
+                        </p>
+                      </td>
+                      <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                        <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
+                          <span
+                            aria-hidden
+                            className="absolute inset-0 bg-yellow-300 opacity-50 rounded-full"
+                          ></span>
+                          <span className="relative">Active</span>
+                        </span>
+                      </td>
+
+                      <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                        <button
+                          onClick={() => onUpdate?.(val?.id, "C")}
+                          type="button"
+                          className="mr-3 text-sm bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-2 rounded focus:outline-none focus:shadow-outline"
                         >
-                            <p className="text-gray-900 whitespace-no-wrap">
-                            {val?.title}
-                            </p>
-                        </td>
-                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                            <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
-                            <span
-                                aria-hidden
-                                className="absolute inset-0 bg-yellow-300 opacity-50 rounded-full"
-                            ></span>
-                            <span className="relative">Active</span>
-                            </span>
-                        </td>
-                        
-                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                            <button
-                            onClick={() => onUpdate?.(val?.id,'C')}
-                            type="button"
-                            className="mr-3 text-sm bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-2 rounded focus:outline-none focus:shadow-outline"
-                            >
-                            <EditPencil  />
-                            </button>
-                            <button
-                            onClick={() => onDelete?.(val?.id,'C')}
-                            type="button"
-                            className="text-sm bg-red-500 hover:bg-red-700 text-white py-1 px-2 rounded focus:outline-none focus:shadow-outline"
-                            >
-                            <Trash />
-                            </button>
-                        </td>
-                        </tr>
-                    ))
-                }
+                          <EditPencil />
+                        </button>
+                        <button
+                          onClick={() => onDelete?.(val?.id, "C")}
+                          type="button"
+                          className="text-sm bg-red-500 hover:bg-red-700 text-white py-1 px-2 rounded focus:outline-none focus:shadow-outline"
+                        >
+                          <Trash />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>

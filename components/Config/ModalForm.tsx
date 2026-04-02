@@ -10,26 +10,21 @@ interface ModalFormHandlers {
 }
 interface ModalFormProps<T> extends ModalFormHandlers {
   title: string;
-  initialState: T;
   setFormInputs: Dispatch<SetStateAction<T>>;
   formInput:T;
 }
 export default function ModalForm<T>({
   title,
   setToOpen,
-  initialState,
   setFormInputs,
   formInput,
   onButtonSubmit,
 }: ModalFormProps<T>) {
-  const [formData, setFormData] = useState<T>(initialState);
   const { handleInput } = useInputHandler<T>({
     setState: setFormInputs,
   });
 
-//   useEffect(() => {
-//     setFormInputs(formData);
-//   }, [formData]);
+
   return (
     <div className="flex flex-col">
       <div className="header border-b border-gray-300 pb-2 flex justify-between items-center">

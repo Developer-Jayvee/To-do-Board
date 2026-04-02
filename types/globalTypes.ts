@@ -84,3 +84,20 @@ export interface CategoryForm {
   title: string;
 }
 export type ConfigType = "C" | "L" | "";
+
+export type LabelReturnForm = CategoryReturnForm;
+export type LabelForm = CategoryForm;
+
+
+export interface TableCategoriesHandlers {
+    onOpenModal?: (type: ConfigType) => void;
+    create?: (data: CategoryForm) => void;
+    onUpdate?: (id: number , type : ConfigType) => void;
+    onDelete?: (id: number , type : ConfigType) => void;
+}
+export interface TableCategoriesProps extends TableCategoriesHandlers {
+    configList: CategoryReturnForm[];
+}
+
+export type TableLabelHandlers = TableCategoriesHandlers;
+export type TableLabelsProps = TableCategoriesProps
