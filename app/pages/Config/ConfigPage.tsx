@@ -3,7 +3,10 @@ import TableCategories from "components/Config/TableCategories";
 import TableLabels from "components/Config/TableLabels";
 import Modal from "components/ui/Modal";
 import { useEffect } from "react";
-import { inititalCategoryFormState } from "src/constants/initialStates";
+import {
+  initialLabelFormState,
+  inititalCategoryFormState,
+} from "src/constants/initialStates";
 import { useConfigHandlers } from "src/hooks/useConfigHandlers";
 import type { ConfigType } from "types/globalTypes";
 
@@ -11,35 +14,32 @@ export default function ConfigPage() {
   const {
     createData,
     handleSubmit,
-    handleUpdate,
     handleDelete,
     openModalOnUpdate,
     fetchList,
-    resetAll,
     isModalOpen,
     setModalOpen,
     categoryList,
-    setCategoryList,
+    labelList,
     modalTitle,
     setModalTitle,
     configType,
-    setConfigType,
     formData,
     setFormData,
-    initialState,
-    setInitialState,
-    currentID,
-    setCurrentID,
   } = useConfigHandlers();
 
   useEffect(() => {
     fetchList();
   }, []);
+
   useEffect(() => {
     if (!isModalOpen) {
-      setFormData(inititalCategoryFormState);
+      const initState =
+        configType === "C" ? inititalCategoryFormState : initialLabelFormState;
+      setFormData(initState);
     }
   }, [isModalOpen]);
+
   useEffect(() => {
     setModalTitle(configType == "C" ? "Category" : "Label");
   }, [configType]);
@@ -53,9 +53,16 @@ export default function ConfigPage() {
             openModalOnUpdate(id, type)
           }
           onDelete={(id: number, type: ConfigType) => handleDelete(id, type)}
-          categoryList={categoryList}
+          configList={categoryList}
         />
-        <TableLabels onOpenModal={(type: ConfigType) => createData(type)} />
+        <TableLabels
+          onOpenModal={(type: ConfigType) => createData(type)}
+          onUpdate={(id: number, type: ConfigType) =>
+            openModalOnUpdate(id, type)
+          }
+          onDelete={(id: number, type: ConfigType) => handleDelete(id, type)}
+          configList={labelList}
+        />
       </div>
       <Modal
         size="M"
@@ -65,7 +72,6 @@ export default function ConfigPage() {
           <ModalForm
             title={modalTitle}
             setToOpen={setModalOpen}
-            initialState={initialState}
             setFormInputs={setFormData}
             formInput={formData}
             onButtonSubmit={(e: SubmitEvent) => handleSubmit(e)}

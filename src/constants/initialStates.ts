@@ -6,15 +6,19 @@ export const BasicTicketForm = {
   label_id: 0,
   expiration_date: "",
 };
-export const inititalCategoryReturnState : CategoryReturnForm[] = [{
-  id:0,
-  code : "",
-  title: "",
-  sort: 0,
-  created_by:0,
-  created_at: "",
-  updated_at:""
-}]
+export const inititalCategoryReturnState: CategoryReturnForm[] = [
+  {
+    id: 0,
+    code: "",
+    title: "",
+    sort: 0,
+    created_by: 0,
+    created_at: "",
+    updated_at: "",
+  },
+];
 export const inititalCategoryFormState = {
-  title:""
-}
+  title: "",
+};
+export const initialLabelReturnState = inititalCategoryReturnState;
+export const initialLabelFormState = inititalCategoryFormState;
