@@ -126,6 +126,7 @@ export function useConfigHandlers() {
     formData,
     setFormData,
     currentID,
-    setCurrentID
+    setCurrentID,
+    fetchConfigList
   };
 }

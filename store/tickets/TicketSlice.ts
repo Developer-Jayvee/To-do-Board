@@ -5,18 +5,20 @@ import type {
   TicketFormTypes,
   TicketForm,
   TicketFormPartial,
+  ProgressFormData,
+  CategoryForm,
 } from "types/globalTypes";
 
 interface TicketSliceState {
-  list: TicketForm[];
-  loading:boolean;
+  list: CategoryForm[];
+  loading: boolean;
 }
 const initialState: TicketSliceState = {
   list: [],
-  loading:false
+  loading: false,
 };
 export const fetchTickets = createAsyncThunk("ticket/getTickets", async () => {
-const response = await boardApi.fetch();
+  const response = await boardApi.fetch();
   return response ?? [];
 });
 export const updateTicket = createAsyncThunk<
@@ -26,6 +28,7 @@ export const updateTicket = createAsyncThunk<
   const response = await boardApi.update(id, data);
   return response ?? [];
 });
+
 export const createTicket = createAsyncThunk<TicketForm, TicketFormTypes>(
   "tickets/createTicket",
   async (formData) => {
@@ -33,7 +36,13 @@ export const createTicket = createAsyncThunk<TicketForm, TicketFormTypes>(
     return response ?? "";
   },
 );
-
+export const updateTicketProgress = createAsyncThunk(
+  "ticket/updateTicketProgress",
+  async ({ id, formData }: ProgressFormData) => {
+    const response = await boardApi.progress({ id: id, formData: formData });
+    return response ?? "";
+  },
+);
 const ticketSlice = createSlice({
   name: "ticket",
   initialState,
@@ -47,18 +56,30 @@ const ticketSlice = createSlice({
       })
       .addCase(updateTicket.fulfilled, (state, action) => {
         const id = action.payload.id;
-        const ticketID = state.list.findIndex((val: any) => val.id === id);
-        state.list = {
-          ...state.list,
-          [ticketID]: action.payload,
-        };
+        state.list = state.list.map((item) => {
+          return {
+            ...item,
+            tickets: item.tickets.map((data: TicketForm) => {
+              return data?.id === id ? action.payload : data;
+            }),
+          };
+        });
       })
-      .addCase(createTicket.pending,(state,action) => {
+      .addCase(createTicket.pending, (state, action) => {
         state.loading = true;
       })
       .addCase(createTicket.fulfilled, (state, action) => {
         state.loading = false;
-        state.list.push(action.payload)
+        const categoryID = action.payload.category_id;
+        state.list = state.list.map((val: CategoryForm) => {
+          if (val.id === categoryID) {
+            return {
+              ...val,
+              tickets: [...val.tickets, action.payload],
+            };
+          }
+          return val;
+        });
       });
   },
 });

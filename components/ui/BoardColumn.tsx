@@ -12,7 +12,7 @@ interface BoardColumnHandlers {
 }
 interface BoardColumnProps extends BoardColumnHandlers {
   title: string;
-  divID: string;
+  divID?: string;
   parentID?: string;
   customClass?: string;
   children?: ReactNode;
@@ -37,7 +37,7 @@ export default function BoardColumn({
         <Plus className="cursor-pointer" />
       </div>
       <div
-        id={divID}
+        id={divID || ""}
         className="ticket-list flex flex-col gap-2 px-1 py-2 rounded-2xl"
       >
         {children || ""}
