@@ -7,10 +7,11 @@ import type {
   TicketFormPartial,
   ProgressFormData,
   CategoryForm,
+  CategoryReturnForm,
 } from "types/globalTypes";
 
 interface TicketSliceState {
-  list: CategoryForm[];
+  list: CategoryReturnForm[];
   loading: boolean;
 }
 const initialState: TicketSliceState = {
@@ -56,6 +57,7 @@ const ticketSlice = createSlice({
       })
       .addCase(updateTicket.fulfilled, (state, action) => {
         const id = action.payload.id;
+        
         state.list = state.list.map((item) => {
           return {
             ...item,
@@ -71,7 +73,7 @@ const ticketSlice = createSlice({
       .addCase(createTicket.fulfilled, (state, action) => {
         state.loading = false;
         const categoryID = action.payload.category_id;
-        state.list = state.list.map((val: CategoryForm) => {
+        state.list = state.list.map((val: CategoryReturnForm) => {
           if (val.id === categoryID) {
             return {
               ...val,

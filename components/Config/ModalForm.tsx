@@ -2,7 +2,6 @@ import { Xmark } from "iconoir-react";
 import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { inititalCategoryFormState } from "src/constants/initialStates";
 import useInputHandler from "src/hooks/useInputHandler";
-import type { CategoryForm } from "types/globalTypes";
 
 interface ModalFormHandlers {
   setToOpen: Dispatch<SetStateAction<boolean>>;
