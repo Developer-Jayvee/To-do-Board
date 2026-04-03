@@ -1,4 +1,4 @@
-import { type ChangeEvent, type Dispatch, type FormEvent, type InputHTMLAttributes, type SetStateAction } from "react";
+import { type ChangeEvent, type Dispatch, type DragEvent, type FormEvent, type InputHTMLAttributes, type SetStateAction } from "react";
 export type RegisterFormDataTypes = {
   name: string;
   email: string;
@@ -115,10 +115,16 @@ export interface TableCategoriesProps extends TableCategoriesHandlers {
 export type TableLabelHandlers = TableCategoriesHandlers;
 export type TableLabelsProps = TableCategoriesProps
 export interface ProgressProps {
-  from:number;
-  to: number;
+  previous:number;
+  next: number;
 }
 export type ProgressFormData = {
   formData : ProgressProps;
   id: number;
+}
+export interface DragAndDropHandlers{
+    dragOver?: (e: DragEvent<HTMLDivElement>) => void;
+    dropOver?: (e: DragEvent<HTMLDivElement>) => void;
+    dragEnter?: (e: DragEvent<HTMLDivElement>) => void;
+    dragEnd?: (e: DragEvent<HTMLDivElement>) => void;
 }

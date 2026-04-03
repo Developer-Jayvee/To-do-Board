@@ -1,9 +1,9 @@
 import BoardColumn from "components/ui/BoardColumn";
 import Ticket from "components/ui/Ticket";
-import { createContext, useEffect, useId, useState } from "react";
+import { createContext, useEffect, useId, useRef, useState } from "react";
 import ModalContent from "./ModalContent";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchTickets, getAllTickets } from "store/tickets/TicketSlice";
+import { fetchTickets, getAllTickets, updateTicketProgress } from "store/tickets/TicketSlice";
 import { type AppDispatch } from "store";
 import type { TicketFormTypes } from "types/globalTypes";
 import { BasicTicketForm } from "src/constants/initialStates";
@@ -35,7 +35,7 @@ const BoardPage = () => {
   const [formData, setFormData] = useState<TicketFormTypes>(BasicTicketForm);
   const [currentID, setCurrentID] = useState<number | null>(null);
   const { setConfigType, fetchConfigList, categoryList, configType } = useConfigHandlers();
-
+  const lastDrop = useRef<HTMLDivElement | null>(null);
   const handleTicketOpen = (id: number, catID: number) => {
     const category = categories
       .find((category: any) => category.id === catID)
@@ -51,6 +51,29 @@ const BoardPage = () => {
     });
     setModalOpen(true);
   };
+   const dropOver = (event:any , parentDivID: string , catID : number) => {
+    event.preventDefault();
+    const id = event.dataTransfer.getData("ticketID");
+    const dropOff = event.target.parentNode.querySelector(".ticket-list");
+    const ticketInfo = JSON.parse(event.dataTransfer.getData("ticketInfo"));
+    const draggedDiv = document.getElementById(id);
+    dispatch(updateTicketProgress({ id: ticketInfo.id , formData: {
+      previous:ticketInfo.category_id,
+      next: catID
+    }}));
+    
+    if(dropOff){
+      event.currentTarget.querySelector(`#${parentDivID}`).appendChild(draggedDiv);
+    }
+
+      
+  };
+  const dragOver = (e: any) => {
+    e.preventDefault();
+    
+  };
+ 
+
 
   useEffect(() => {
     dispatch(fetchTickets());
@@ -64,10 +87,6 @@ const BoardPage = () => {
     fetchConfigList();
   }, [configType]);
 
-  useEffect( () => {
-    console.log(categories);
-    
-  },[categories]);
   useEffect(() => {
     if (!isModalOpen) {
       setCurrentID(null);
@@ -87,18 +106,18 @@ const BoardPage = () => {
         <TicketContext.Provider value={user}>
           {categories.map((parentVal: any, parentIndex: number) => (
             <BoardColumn
+              divID={`d${parentIndex}`}
               key={parentIndex}
               title={parentVal?.title}
-              // dragOver={(e) => dragOver(e)}
-              // dropOver={(e) => dropOver(e, openID)}
+              dragOver={(e) => dragOver(e)}
+              dropOver={(e) => dropOver(e, `d${parentIndex}` , parentVal.id)}
             >
               {parentVal?.tickets?.map((childVal: any, childIndex: number) => (
                 <Ticket
                   id={childVal?.id}
                   onOpen={() => handleTicketOpen(childVal?.id, parentVal?.id)}
                   key={childIndex}
-                  title={childVal.title}
-                  description={childVal.description}
+                  details={childVal}
                 />
               ))}
             </BoardColumn>
