@@ -1,23 +1,24 @@
 import { ChatLines } from "iconoir-react";
 import { useId, type ChangeEvent } from "react";
+import type { TicketForm } from "types/globalTypes";
 
 interface TicketHandlers {
   onOpen?: (id: number) => void;
 }
 interface TicketProps extends TicketHandlers {
   id: number;
-  title: string;
-  description?: string;
+  details : TicketForm;
 }
 export default function Ticket({
   id,
-  title,
-  description,
+  details,
   onOpen,
 }: TicketProps) {
   const divID = useId();
+  const { title , description , category_id } = details
   const startDrag = (e: React.DragEvent<HTMLDivElement>) => {
     e.dataTransfer.setData("ticketID", divID);
+    e.dataTransfer.setData("ticketInfo",JSON.stringify(details))
   };
   return (
     <div

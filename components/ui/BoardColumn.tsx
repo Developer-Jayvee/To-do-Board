@@ -5,12 +5,10 @@ import {
   type DragEventHandler,
   type ReactNode,
 } from "react";
+import type { DragAndDropHandlers } from "types/globalTypes";
 
-interface BoardColumnHandlers {
-  dragOver?: (e: DragEvent<HTMLDivElement>) => void;
-  dropOver?: (e: DragEvent<HTMLDivElement>) => void;
-}
-interface BoardColumnProps extends BoardColumnHandlers {
+
+interface BoardColumnProps extends DragAndDropHandlers {
   title: string;
   divID?: string;
   parentID?: string;
@@ -24,6 +22,8 @@ export default function BoardColumn({
   customClass = "",
   dragOver,
   dropOver,
+  dragEnter,
+  dragEnd,
   children,
 }: BoardColumnProps) {
   return (
@@ -31,10 +31,12 @@ export default function BoardColumn({
       className="board-column bg-gray-100 w-[300px] flex flex-col rounded-lg border-t-0 "
       onDragOver={(e: DragEvent<HTMLDivElement>) => dragOver?.(e)}
       onDrop={(e: DragEvent<HTMLDivElement>) => dropOver?.(e)}
+      onDragEnter={(e : DragEvent<HTMLDivElement>) => dragEnter?.(e)}
+      onDragEnd={(e : DragEvent<HTMLDivElement>) => dragEnd?.(e)}
     >
       <div className="board-header flex justify-between border-b-2 p-2">
         <h2 className="column-title rounded-lg ">{title}</h2>
-        <Plus className="cursor-pointer" />
+        {/* <Plus className="cursor-pointer" /> */}
       </div>
       <div
         id={divID || ""}
