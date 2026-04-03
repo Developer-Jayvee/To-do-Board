@@ -15,7 +15,7 @@ export default function Ticket({
   onOpen,
 }: TicketProps) {
   const divID = useId();
-  const { title , description , category_id } = details
+  const { title , description , category_id , label } = details
   const startDrag = (e: React.DragEvent<HTMLDivElement>) => {
     e.dataTransfer.setData("ticketID", divID);
     e.dataTransfer.setData("ticketInfo",JSON.stringify(details))
@@ -32,8 +32,8 @@ export default function Ticket({
     >
       <div className="ticket-header flex ">
         <span className="ticket-title flex-1 text-xl font-medium">{title}</span>
-        <span className="ticket-type bg-green-500 text-white px-4 py-1 rounded-2xl font-semibold text-sm">
-          Bug
+        <span className={`ticket-type  px-4 py-1 rounded-2xl text-sm ${label?.inlineCSS}`}>
+          {label?.title}
         </span>
       </div>
       <div className="ticket-body">

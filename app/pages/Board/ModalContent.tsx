@@ -1,25 +1,24 @@
 import "./modalContent.css";
 import Modal from "components/ui/Modal";
-import {
-  useEffect,
-  useState,
-  type ChangeEvent,
-  type Dispatch,
-  type FormEvent,
-  type SetStateAction,
-} from "react";
+import SelectComponent from "components/ui/Select";
+import { useEffect, useState, type ChangeEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BasicTicketForm } from "src/constants/initialStates";
 import { type AppDispatch, type RootState } from "store";
 import { createTicket, updateTicket } from "store/tickets/TicketSlice";
 import type {
-  TicketFormTypes,
   ModalContentActions,
   ModalContentProps,
   InputHandler,
   TicketForm,
+  EventTarget,
 } from "types/globalTypes";
 
+interface ModalBodyProps {
+  handleInput: (name: string, value: string) => void;
+  formData: TicketForm;
+  labelOptions: { key: string; value: string }[];
+}
 export const ModalHeader = ({
   isUpdate,
   closeModal,
@@ -38,7 +37,11 @@ export const ModalHeader = ({
     </>
   );
 };
-export const ModalBody = (handleInput: InputHandler, formData: TicketForm) => {
+export const ModalBody = ({
+  formData,
+  handleInput,
+  labelOptions,
+}: ModalBodyProps) => {
   return (
     <div className="grid grid-cols-2 p-2">
       <div className="inline--input col-span-2">
@@ -48,7 +51,7 @@ export const ModalBody = (handleInput: InputHandler, formData: TicketForm) => {
           className="border-0  outline-0 text-2xl"
           placeholder="Title"
           name="title"
-          onChange={handleInput}
+          onChange={(e) => handleInput("title", e.target.value)}
         />
       </div>
       <div className="inline--input">
@@ -56,7 +59,7 @@ export const ModalBody = (handleInput: InputHandler, formData: TicketForm) => {
         <input
           type="date"
           value={formData.expiration_date}
-          onChange={handleInput}
+          onChange={(e) => handleInput("expiration_date", e.target.value)}
           name="expiration_date"
         />
       </div>
@@ -71,16 +74,13 @@ export const ModalBody = (handleInput: InputHandler, formData: TicketForm) => {
       </div>
       <div className="inline--input"> &nbsp; </div>
       <div className="inline--input ">
-        <label>Tag</label>
-        <select
-          name="label_id"
-          onChange={handleInput}
-          value={formData.label_id}
-          required
-        >
-          <option value="">Select tag</option>
-          <option value={1}>Bug</option>
-        </select>
+        <label>Label</label>
+        <SelectComponent
+          list={labelOptions}
+          defaultKey={formData.label_id}
+          defaultVal="Choose a label"
+          onChange={(name: string, value: string) => handleInput(name, value)}
+        />
       </div>
 
       <div className="inline--input col-span-2 flex flex-col">
@@ -88,7 +88,7 @@ export const ModalBody = (handleInput: InputHandler, formData: TicketForm) => {
         <textarea
           className=" border border-gray-300"
           name="description"
-          onChange={handleInput}
+          onChange={(e) => handleInput("description", e.target.value)}
           rows={10}
           value={formData.description}
         ></textarea>
@@ -99,11 +99,16 @@ export const ModalBody = (handleInput: InputHandler, formData: TicketForm) => {
 
 const ModalContent = ({
   currentID,
+  categoryID,
   isModalOpen,
   modalDetails,
   setModalOpen,
+  labelList,
 }: ModalContentProps) => {
   const dispatch = useDispatch<AppDispatch>();
+  const [optionLabel, setOptionLabel] = useState<
+  Array<{ key: string; value: string }>
+  >([]);
   const [formData, setFormData] = useState<TicketForm>(BasicTicketForm);
   const handleSubmit = async () => {
     const action = confirm("Are you sure you want to proceed?");
@@ -121,10 +126,7 @@ const ModalContent = ({
         alert("Failed to save.");
       });
   };
-  const handleInputs = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
-  ) => {
-    const { name, value } = e.target;
+  const handleInputs = (name: string, value: string | number) => {
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -144,11 +146,22 @@ const ModalContent = ({
         title: modalDetails.title,
         description: modalDetails.description,
         label_id: modalDetails.label_id,
-        category_id: 26,
+        category_id: categoryID ,
         expiration_date: `${year}-${month}-${day}`,
       });
     }
-  }, [modalDetails]);
+  }, [modalDetails,categoryID]);
+  useEffect(() => {
+    setOptionLabel(
+      labelList.map((val: any) => {
+        return {
+          key: val.id,
+          value: val.title,
+          customClass:`${val.inlineCSS} py-1 px-[25px]`
+        };
+      }),
+    );
+  }, [labelList]);
   return (
     <Modal
       size="XL"
@@ -157,7 +170,11 @@ const ModalContent = ({
       header={
         <ModalHeader closeModal={closeModal} submitModal={handleSubmit} />
       }
-      body={ModalBody(handleInputs, formData)}
+      body={ModalBody({
+        formData: formData,
+        handleInput: handleInputs,
+        labelOptions: optionLabel,
+      })}
     />
   );
 };

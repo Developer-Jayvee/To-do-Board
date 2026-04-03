@@ -90,6 +90,12 @@ export function useConfigHandlers() {
     if(configType === "C") setCategoryList(response);
     else if (configType === "L") setLabelList(response);
   }
+  const getAllList = async () => {
+    const category = await configApi.category.all();
+    const label = await configApi.labels.all();
+    setCategoryList(category);
+    setLabelList(label);
+  }
   const fetchList = async () => {
     const categoryResponse = await category.all();
     const labelResponse = await labels.all();
@@ -127,6 +133,7 @@ export function useConfigHandlers() {
     setFormData,
     currentID,
     setCurrentID,
-    fetchConfigList
+    fetchConfigList,
+    getAllList
   };
 }

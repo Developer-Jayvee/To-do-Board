@@ -4,7 +4,7 @@ export const BasicTicketForm = {
   title: "",
   description: "",
   label_id: 0,
-  category_id:26,
+  category_id:0,
   expiration_date: "",
   created_by: 1
 };
@@ -14,6 +14,7 @@ export const inititalCategoryReturnState: CategoryReturnForm[] = [
     code: "",
     title: "",
     sort: 0,
+    tickets:[],
     created_by: 0,
     created_at: "",
     updated_at: "",

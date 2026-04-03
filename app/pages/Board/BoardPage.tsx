@@ -34,7 +34,8 @@ const BoardPage = () => {
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const [formData, setFormData] = useState<TicketFormTypes>(BasicTicketForm);
   const [currentID, setCurrentID] = useState<number | null>(null);
-  const { setConfigType, fetchConfigList, categoryList, configType } = useConfigHandlers();
+  const [currentCategory, setCurrentCategory] = useState<number | null>(null);
+  const { getAllList , labelList , categoryList } = useConfigHandlers();
   const lastDrop = useRef<HTMLDivElement | null>(null);
   const handleTicketOpen = (id: number, catID: number) => {
     const category = categories
@@ -42,6 +43,7 @@ const BoardPage = () => {
       ?.tickets.find((ticket: any) => ticket.id === id);
     if (!category) return;
     setCurrentID(id);
+    setCurrentCategory(catID);
     setFormData({
       title: category.title,
       description: category.description,
@@ -63,6 +65,7 @@ const BoardPage = () => {
     }}));
     
     if(dropOff){
+      setCurrentCategory(catID);
       event.currentTarget.querySelector(`#${parentDivID}`).appendChild(draggedDiv);
     }
 
@@ -70,22 +73,18 @@ const BoardPage = () => {
   };
   const dragOver = (e: any) => {
     e.preventDefault();
-    
   };
  
-
 
   useEffect(() => {
     dispatch(fetchTickets());
   }, [dispatch]);
 
   useEffect(() => {
-    setConfigType("C");
+    getAllList()
   }, []);
 
-  useEffect(() => {
-    fetchConfigList();
-  }, [configType]);
+  
 
   useEffect(() => {
     if (!isModalOpen) {
@@ -125,7 +124,9 @@ const BoardPage = () => {
         </TicketContext.Provider>
       </div>
       <ModalContent
+        labelList={labelList}
         currentID={currentID}
+        categoryID={currentCategory}
         setModalOpen={setModalOpen}
         isModalOpen={isModalOpen}
         modalDetails={formData}
