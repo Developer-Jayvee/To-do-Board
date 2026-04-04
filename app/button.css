@@ -1,8 +1,8 @@
 button {
   cursor: pointer;
   border-radius: 3px;
-  padding: 8px 20px;
-  font-weight: 500;
+  padding: 8px 25px;
+  font-weight: 500 !important;
 }
 button.btn-primary {
     background-color: rgb(106, 29, 177);

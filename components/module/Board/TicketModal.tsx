@@ -1,5 +1,5 @@
 import TicketModalBody from "components/module/Board/TicketModalBody";
-import "./modalContent.css";
+import "./modalContent.css"
 import Modal from "components/ui/Modal";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -11,19 +11,18 @@ import type {
   TicketForm,
   ListTypes,
 } from "types/globalTypes";
-import TicketModalHeader from "components/module/Board/TicketModalHeader";
 import { defaultDateFormat } from "utils/utilities";
+import TicketModalFooter from "components/module/Board/TicketModalFooter";
 
 
-const ModalContent = ({
+export default function TicketModal({
   currentID,
-  categoryID,
   isModalOpen,
   modalDetails,
   setModalOpen,
   labelList,
   categoryList,
-}: ModalContentProps) => {
+}: ModalContentProps){
   const dispatch = useDispatch<AppDispatch>();
   const [optionLabel, setOptionLabel] = useState<ListTypes[]>([]);
   const [formData, setFormData] = useState<TicketForm>(BasicTicketForm);
@@ -39,6 +38,7 @@ const ModalContent = ({
       .unwrap()
       .then((result) => {
         setModalOpen(false);
+        setFormData(BasicTicketForm);
       })
       .catch((error) => {
         alert("Failed to save.");
@@ -57,9 +57,12 @@ const ModalContent = ({
     setFormData(BasicTicketForm);
   };
 
+  
+
   useEffect(() => {
     if (modalDetails) {
       setFormData({
+        id: modalDetails.id,
         title: modalDetails.title,
         description: modalDetails.description,
         label_id: modalDetails.label_id,
@@ -89,7 +92,12 @@ const ModalContent = ({
       size="XL"
       isModalOpen={isModalOpen}
       closeState={setModalOpen}
-      header={(<TicketModalHeader closeModal={closeModal} submitModal={handleSubmit}/>)}
+      header={modalDetails?.title !== "" ? ( 
+        <div className="flex justify-start ">
+            <p className="font-medium text-2xl py-2 pl-2">{modalDetails?.title}</p>
+        </div>
+      ) : null}
+      footer={(<TicketModalFooter closeModal={closeModal} submitModal={handleSubmit}/>)}
       body={
         <TicketModalBody
           formData={formData}
@@ -100,5 +108,3 @@ const ModalContent = ({
     />
   );
 };
-
-export default ModalContent;

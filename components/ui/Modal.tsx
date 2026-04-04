@@ -48,21 +48,12 @@ export default function Modal({
       <div
         className={`modal-container bg-white py-2  rounded-[5px] ${modalSize}  flex flex-col `}
       >
-        <div className={`modal-header px-2 py-1 border-b border-gray-300 flex items-center justify-end gap-3 ${header ? '' : 'hidden'}`}>
-          {header || (
-            <>
-                <ArrowEmailForward className="cursor-pointer" />
-                <MoreHoriz className="cursor-pointer" />
-                <Xmark
-                  className="cursor-pointer"
-                  onClick={() => closeState(false)}
-                />
-            </>
-          )}
+        <div className={`modal-header px-2 py-1 border-b border-gray-300  ${header ? '' : 'hidden'}`}>
+          {header || ""}
         </div>
         <div className="modal-body p-2">{body || ""}</div>
         <div
-          className={`modal-footer px-2 border-t border-gray-300 ${footer ? "" : "hidden"}`}
+          className={`modal-footer px-2 py-1 border-0 border-gray-300 flex items-center justify-end gap-3 ${footer ? "" : "hidden"}`}
         >
           {footer || ""}
         </div>
