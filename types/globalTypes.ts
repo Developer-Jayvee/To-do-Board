@@ -41,6 +41,7 @@ export interface TimeStamps {
 }
 
 export interface TicketFormTypes  {
+    id ?: number;
     code ?: string;
     title : string;
     description : string;

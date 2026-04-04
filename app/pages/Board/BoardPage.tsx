@@ -1,13 +1,13 @@
 import BoardColumn from "components/ui/BoardColumn";
 import Ticket from "components/ui/Ticket";
 import { createContext, useEffect, useId, useRef, useState } from "react";
-import ModalContent from "./ModalContent";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTickets, getAllTickets, updateTicketProgress } from "store/tickets/TicketSlice";
 import { type AppDispatch } from "store";
 import type { TicketFormTypes } from "types/globalTypes";
 import { BasicTicketForm } from "src/constants/initialStates";
 import { useConfigHandlers } from "src/hooks/useConfigHandlers";
+import TicketModal from "components/module/Board/TicketModal";
 
 
 export const TicketContext = createContext(null);
@@ -24,19 +24,19 @@ const BoardPage = () => {
     category : {}
   })
   const handleTicketOpen = (id: number, catID: number) => {
-    const category = categories
+    const ticketDetails = categories
       .find((category: any) => category.id === catID)
       ?.tickets.find((ticket: any) => ticket.id === id);
-    if (!category) return;
+    if (!ticketDetails) return;
     setCurrentID(id);
     setCurrentCategory(catID);
     setFormData({
-      id : category.id,
-      title: category.title,
-      description: category.description,
-      label_id: category.label_id,
+      id : ticketDetails.id,
+      title: ticketDetails.title,
+      description: ticketDetails.description,
+      label_id: ticketDetails.label_id,
       category_id:0,
-      expiration_date: category.expiration_date,
+      expiration_date: ticketDetails.expiration_date,
     });
     setModalOpen(true);
   };
@@ -98,7 +98,10 @@ const BoardPage = () => {
       <div className="filters">
         <button
           className="filter-btn btn-success"
-          onClick={() => setModalOpen(true)}
+          onClick={() => {
+            setModalOpen(true);
+            setFormData(BasicTicketForm);
+          }}
         >
           Create Ticket
         </button>
@@ -127,7 +130,7 @@ const BoardPage = () => {
           ))}
         </TicketContext.Provider>
       </div>
-        <ModalContent
+        <TicketModal
           labelList={labelList}
           categoryList={categoryList}
           currentID={currentID}
