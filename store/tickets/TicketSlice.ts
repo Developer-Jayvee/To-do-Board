@@ -82,6 +82,17 @@ const ticketSlice = createSlice({
           }
           return val;
         });
+      })
+      .addCase(updateTicketProgress.fulfilled,(state,action) => {
+        const ticketID = action.payload.id;
+        state.list = state.list.map( (val : CategoryReturnForm) => {
+            return {
+              ...val,
+              tickets: val.tickets.map( (data : TicketForm) => {
+                return data.id === ticketID ? action.payload : data; 
+              })
+            }
+        })
       });
   },
 });

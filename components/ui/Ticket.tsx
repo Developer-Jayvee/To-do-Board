@@ -7,33 +7,37 @@ interface TicketHandlers {
 }
 interface TicketProps extends TicketHandlers {
   id: number;
-  details : TicketForm;
+  details: TicketForm;
 }
-export default function Ticket({
-  id,
-  details,
-  onOpen,
-}: TicketProps) {
+export default function Ticket({ id, details, onOpen }: TicketProps) {
   const divID = useId();
-  const { title , description , category_id , label } = details
+  const { title, label, category } = details;
   const startDrag = (e: React.DragEvent<HTMLDivElement>) => {
     e.dataTransfer.setData("ticketID", divID);
-    e.dataTransfer.setData("ticketInfo",JSON.stringify(details))
+    e.dataTransfer.setData("ticketInfo", JSON.stringify(details));
   };
+
   return (
     <div
       id={divID}
-      className="ticket-card opacity-100 bg-white border-2 p-2 flex flex-col gap-2 cursor-pointer rounded-lg"
+      className="ticket-card bg-white shadow-lg p-2 flex flex-col gap-2 cursor-pointer rounded-lg"
       draggable="true"
       onDragStart={(e) => {
+        e.currentTarget.classList.add('opacity-1')
         startDrag(e);
       }}
       onClick={() => onOpen?.(id)}
     >
-      <div className="ticket-header flex ">
-        <span className="ticket-title flex-1 text-xl font-medium">{title}</span>
-        <span className={`ticket-type  px-4 py-1 rounded-2xl text-sm ${label?.inlineCSS}`}>
+      <div className="ticket-header grid grid-cols-[1fr_70px] ">
+        <span className=" text-gray-500 text-sm mb-2"> {category?.title} </span>
+        <span
+          className={`ticket-type flex items-center justify-center rounded-2xl text-xs text-center font-semibold  `}
+          style={{backgroundColor:label?.bgColor , color : label?.textColor}}
+        >
           {label?.title}
+        </span>
+        <span className="ticket-title col-span-2  text-xl font-medium">
+          {title}
         </span>
       </div>
       <div className="ticket-body">
