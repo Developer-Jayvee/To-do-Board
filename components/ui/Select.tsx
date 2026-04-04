@@ -9,43 +9,46 @@ import {
   type ChangeEvent,
 } from "react";
 import { nonCaseSensitiveSearch } from "utils/utilities";
-import type { EventTarget } from "types/globalTypes";
+import type { EventTarget, ListTypes } from "types/globalTypes";
 
-type ListTypes = {
-  key: string;
-  value: string;
-  customClass?: string;
-};
+
 
 interface SelectProps {
   list: ListTypes[];
   defaultVal: string;
-  defaultKey : string | number;
-  onChange?: (name:string, value:string ) => void;
+  defaultKey: string | number;
+  readOnly ?:boolean;
+  onChange?: (name: string, value: string) => void;
 }
 export default function SelectComponent({
   list,
   defaultVal = "Choose an option",
   defaultKey = "",
-  onChange
+  readOnly = false,
+  onChange,
 }: SelectProps) {
   const ref = useRef(null);
+  const [isReadOnly ,setIsReadyOnly] = useState<boolean>(readOnly)
   const [isOptionHidden, setOptionHidden] = useState<boolean>(true);
   const [searchInput, setSearchInput] = useState<string | null>(null);
   const [selectedOption, setSelectedOption] = useState<ListTypes>({
     key: defaultKey as string,
     value: defaultVal,
-    customClass:""
+    style: { background: "", color: "" },
   });
   const [optionList, setOptionList] = useState<Array<ListTypes>>([
     {
       key: "",
       value: "",
-      customClass:""
+      style: { background: "", color: "" },
     },
   ]);
   const deferredQuery = useDeferredValue(optionList);
-  const toggleOptions = () => setOptionHidden(!isOptionHidden);
+  const toggleOptions = () => {
+    if(!isReadOnly){
+      setOptionHidden(!isOptionHidden)
+    }
+  };
 
   const searchOptions = (text: string) => {
     return list.filter((val: ListTypes) =>
@@ -62,11 +65,18 @@ export default function SelectComponent({
     if (list) {
       setOptionList(list);
     }
-  }, [list]);
-  useEffect( () => {
-    const defaultOption = list.find((val : any) => val.key === defaultKey);
-    if(defaultOption) setSelectedOption(defaultOption);
-  },[defaultKey]);
+    setIsReadyOnly(readOnly)
+  }, [list,readOnly]);
+  useEffect(() => {
+    const defaultOption = list.find((val: any) => val.key === defaultKey);
+    if (defaultOption) setSelectedOption(defaultOption);
+    else
+      setSelectedOption({
+        style: { background: "", color: "" },
+        key: "",
+        value: defaultVal,
+      });
+  }, [defaultKey]);
   return (
     <div
       className="relative transition-all"
@@ -74,10 +84,18 @@ export default function SelectComponent({
       onMouseLeave={() => setOptionHidden(true)}
     >
       <div
-        className="placeholder-container border border-gray-300 bg-white px-2 py-1 cursor-pointer z-10"
+        className={`placeholder-container border border-gray-300 bg-white px-2 py-1  z-10 ${isReadOnly ? 'cursor-not-allowed' : 'cursor-pointer'}`}
         onClick={toggleOptions}
       >
-        <p className="text-gray-600">{selectedOption.value}</p>
+        <p
+          className={`text-gray-600 ml-1  rounded-full font-semibold  text-center py-1 px-[25px] inline-block `}
+          style={{
+            backgroundColor: selectedOption.style.background,
+            color: selectedOption.style.color,
+          }}
+        >
+          {selectedOption.value}
+        </p>
       </div>
       <div
         className={`${isOptionHidden ? "hidden" : ""} options-container border border-gray-400 border-t-0 flex flex-col gap-2 overflow-hidden absolute w-full bg-white shadow-gray-300 shadow-xs`}
@@ -98,12 +116,24 @@ export default function SelectComponent({
                 key={index}
                 className={`${selectedOption.key === data.key ? "bg-gray-200" : ""} cursor-pointer hover:bg-gray-200 py-1`}
                 onClick={() => {
-                  setSelectedOption({ key: data.key, value: data.value });
+                  setSelectedOption({
+                    key: data.key,
+                    value: data.value,
+                    style: data.style,
+                  });
                   setOptionHidden(true);
-                  onChange?.('label_id',data.key);
+                  onChange?.("label_id", data.key);
                 }}
               >
-                <span className={`ml-1  rounded-full ${data.customClass}`}>{data.value}</span>
+                <span
+                  className={`ml-1  rounded-full font-semibold px-[25px] py-1 inline-block`}
+                  style={{
+                    backgroundColor: data.style.background,
+                    color: data.style.color,
+                  }}
+                >
+                  {data.value}
+                </span>
               </li>
             );
           })}

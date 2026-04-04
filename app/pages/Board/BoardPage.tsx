@@ -9,34 +9,20 @@ import type { TicketFormTypes } from "types/globalTypes";
 import { BasicTicketForm } from "src/constants/initialStates";
 import { useConfigHandlers } from "src/hooks/useConfigHandlers";
 
-// NOTES
-/*
-STEPS ON CREATING DRAG AND DROP
-1. create a unique id for each droping point divs ( useId() )
-2.Add drag and drop function on parent div
-  onDragOver={(e) => dragOver(e)} -> e.preventDefault()
-  onDrop={(e) => dropOver(e)} -> e.preventDefault()
 
-3.useContext for distributing global variables ( optional )
-4.in child component , create a unique ID for parent div  ( useId() )
-5.add "draggable = true" attribute
-6. add inline function onDragStart 
-7. onDragStart set e.dataTransfer.setData('key','value') , it will be use to fetch the unique id in the parent div
-8. in onDrop , fetch the id using the key e.dataTransfer.getData("key") then use document.getElementById to get the whole div 
-9.  e.currentTarget.appendChild(div) to append the drag div
-
-*/
-export const TicketContext = createContext();
+export const TicketContext = createContext(null);
+export const ModalContentContext = createContext(null);
 const BoardPage = () => {
-  const user = {};
   const dispatch = useDispatch<AppDispatch>();
   const categories = useSelector(getAllTickets);
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const [formData, setFormData] = useState<TicketFormTypes>(BasicTicketForm);
   const [currentID, setCurrentID] = useState<number | null>(null);
-  const [currentCategory, setCurrentCategory] = useState<number | null>(null);
+  const [currentCategory, setCurrentCategory] = useState<number>(0);
   const { getAllList , labelList , categoryList } = useConfigHandlers();
-  const lastDrop = useRef<HTMLDivElement | null>(null);
+  const [provider , setProvider ] = useState({
+    category : {}
+  })
   const handleTicketOpen = (id: number, catID: number) => {
     const category = categories
       .find((category: any) => category.id === catID)
@@ -45,6 +31,7 @@ const BoardPage = () => {
     setCurrentID(id);
     setCurrentCategory(catID);
     setFormData({
+      id : category.id,
       title: category.title,
       description: category.description,
       label_id: category.label_id,
@@ -56,25 +43,32 @@ const BoardPage = () => {
    const dropOver = (event:any , parentDivID: string , catID : number) => {
     event.preventDefault();
     const id = event.dataTransfer.getData("ticketID");
-    const dropOff = event.target.parentNode.querySelector(".ticket-list");
     const ticketInfo = JSON.parse(event.dataTransfer.getData("ticketInfo"));
+
+    const dropOff = event.target.parentNode.querySelector(".ticket-list");
     const draggedDiv = document.getElementById(id);
+    if(!draggedDiv || ticketInfo.category_id === catID) return;
+    draggedDiv.style.opacity = "1";
+    
     dispatch(updateTicketProgress({ id: ticketInfo.id , formData: {
       previous:ticketInfo.category_id,
       next: catID
     }}));
-    
-    if(dropOff){
-      setCurrentCategory(catID);
+    if(!dropOff){
+      event.currentTarget.querySelector(".ticket-list").appendChild(draggedDiv)
+    }else{
       event.currentTarget.querySelector(`#${parentDivID}`).appendChild(draggedDiv);
     }
-
       
   };
   const dragOver = (e: any) => {
     e.preventDefault();
   };
- 
+  const dragEnd = (e: any) => {
+      const parentNode = e.currentTarget.querySelector('.ticket-list');
+      const childrenNode = parentNode.querySelectorAll('.ticket-card');
+      childrenNode.forEach(child => child.classList.remove('opacity-1'));
+  }
 
   useEffect(() => {
     dispatch(fetchTickets());
@@ -82,9 +76,17 @@ const BoardPage = () => {
 
   useEffect(() => {
     getAllList()
+    .finally( () => {
+      setProvider(
+        (prev) => ({
+          ...prev,
+          category : categoryList,
+          label : labelList
+        })
+      )
+    })
   }, []);
 
-  
 
   useEffect(() => {
     if (!isModalOpen) {
@@ -102,14 +104,16 @@ const BoardPage = () => {
         </button>
       </div>
       <div className="board-container flex no-wrap gap-5">
-        <TicketContext.Provider value={user}>
+        <TicketContext.Provider value={provider}>
           {categories.map((parentVal: any, parentIndex: number) => (
             <BoardColumn
               divID={`d${parentIndex}`}
               key={parentIndex}
+              categoryDetails={parentVal}
               title={parentVal?.title}
-              dragOver={(e) => dragOver(e)}
+              dragOver={dragOver}
               dropOver={(e) => dropOver(e, `d${parentIndex}` , parentVal.id)}
+              dragEnd={(e) => dragEnd(e)}
             >
               {parentVal?.tickets?.map((childVal: any, childIndex: number) => (
                 <Ticket
@@ -123,14 +127,16 @@ const BoardPage = () => {
           ))}
         </TicketContext.Provider>
       </div>
-      <ModalContent
-        labelList={labelList}
-        currentID={currentID}
-        categoryID={currentCategory}
-        setModalOpen={setModalOpen}
-        isModalOpen={isModalOpen}
-        modalDetails={formData}
-      />
+        <ModalContent
+          labelList={labelList}
+          categoryList={categoryList}
+          currentID={currentID}
+          categoryID={currentCategory}
+          setModalOpen={setModalOpen}
+          isModalOpen={isModalOpen}
+          modalDetails={formData}
+        />
+
     </div>
   );
 };

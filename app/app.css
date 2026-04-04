@@ -22,3 +22,16 @@ textarea{
 input[type=text]{
   padding-left: 10px;
 }
+input:read-only,
+select:read-only,
+textarea:read-only
+{
+  cursor: not-allowed;
+}
+
+/* input[type=text],
+input[type=date]
+{
+  width: 100%;
+  border:1px solid rgba(128, 128, 128, 0.49);
+} */

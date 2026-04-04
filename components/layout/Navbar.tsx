@@ -14,7 +14,7 @@ export default function Navbar(
         <nav className={`navbar  fixed left-[250px] top-0 right-0 flex justify-between items-center gap-4 p-2 ${customClass}`}>
             <h1 className="flex-1 text-xl ">Board</h1>
             <div className="search-bar relative flex-2 ">
-                <input className="outline-offset-0 border-2 w-full py-1 rounded-2xl" type="text" placeholder="Search..." />
+                <input type="text" className="outline-offset-0 border-2 w-full py-1 rounded-2xl"  placeholder="" />
                 <Search className="search-icon absolute  left-2 top-1"/>
             </div>
             <div className="notification mx-2 ">

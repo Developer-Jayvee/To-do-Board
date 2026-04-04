@@ -57,6 +57,7 @@ export interface TicketForm extends TimeStamps {
   expiration_date: string;
   label_id: number;
   label?: LabelReturnForm;
+  category?: CategoryReturnForm;
   category_id ?: number;
   created_by ?: number;
 }
@@ -83,6 +84,7 @@ export interface ModalContentProps extends ModalContentActions{
     isModalOpen : boolean;
     modalDetails? : TicketFormTypes;
     labelList : LabelReturnForm[];
+    categoryList : CategoryReturnForm[];
     setModalOpen : Dispatch<SetStateAction<boolean>>;
 }
 export type InputHandler = (e : ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
@@ -93,11 +95,14 @@ export interface CategoryReturnForm extends Partial<TimeStamps> {
   code : string;
   title: string;
   sort: number;
-  inlineCSS?: string;
+  bgColor?: string;
+  textColor?: string;
   created_by:number;
 }
 export interface CategoryForm {
   title: string;
+  bgColor?:string;
+  textColor?: string;
 }
 export type ConfigType = "C" | "L" | "";
 
@@ -130,8 +135,24 @@ export interface DragAndDropHandlers{
     dropOver?: (e: DragEvent<HTMLDivElement>) => void;
     dragEnter?: (e: DragEvent<HTMLDivElement>) => void;
     dragEnd?: (e: DragEvent<HTMLDivElement>) => void;
+    dragLeave?: (e: DragEvent<HTMLDivElement>) => void;
 }
 export type EventTarget = {
     name:string;
     value:string;
+}
+
+export type ListTypes = {
+  key: string;
+  value: string;
+  style: {
+    background: string;
+    color: string;
+  };
+};
+
+export interface ModalBodyProps {
+  handleInput: (name: string, value: string) => void;
+  formData: TicketForm;
+  labelOptions: { key: string; value: string }[];
 }
