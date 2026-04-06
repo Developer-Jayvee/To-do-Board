@@ -88,7 +88,7 @@ const BoardPage = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    getAllList().finally(() => {
+    getAllList(false).finally(() => {
       setProvider((prev) => ({
         ...prev,
         category: categoryList,

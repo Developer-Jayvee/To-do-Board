@@ -1,3 +1,4 @@
+import { Sketch } from "@uiw/react-color";
 import { Xmark } from "iconoir-react";
 import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { inititalCategoryFormState } from "src/constants/initialStates";
@@ -9,11 +10,13 @@ interface ModalFormHandlers {
 }
 interface ModalFormProps<T> extends ModalFormHandlers {
   title: string;
+  canSubmit?:boolean;
   setFormInputs: Dispatch<SetStateAction<T>>;
   formInput:T;
 }
 export default function ModalForm<T>({
   title,
+  canSubmit = false,
   setToOpen,
   setFormInputs,
   formInput,
@@ -22,7 +25,6 @@ export default function ModalForm<T>({
   const { handleInput } = useInputHandler<T>({
     setState: setFormInputs,
   });
-
 
   return (
     <div className="flex flex-col">
@@ -42,8 +44,12 @@ export default function ModalForm<T>({
             value={formInput?.title}
           />
         </div>
+        <div className="input--wrapper ">
+          <label className="font-medium block mb-2 ">Color</label>
+        </div>
         <button
-          className="btn-primary my-2 w-full"
+          className=" bg-blue-700 text-white my-2 w-full cursor-pointer disabled:cursor-not-allowed disabled:bg-blue-400"
+          disabled={!canSubmit}
         >
           {" "}
           Submit{" "}

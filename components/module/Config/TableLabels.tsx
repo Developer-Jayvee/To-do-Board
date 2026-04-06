@@ -1,6 +1,8 @@
 import { EditPencil, Plus, Trash } from "iconoir-react";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { initialLabelReturnState } from "src/constants/initialStates";
+import type { RootState } from "store";
 import type {
   LabelReturnForm,
   ConfigType,
@@ -16,6 +18,16 @@ export default function TableLabels({
   const [tableList, setTableList] = useState<LabelReturnForm[]>(
     initialLabelReturnState,
   );
+ const ticketPerCategory = useSelector( (state: RootState) => state.ticket);
+  
+  const isUsed =  (id : number) =>  {
+    
+      return ticketPerCategory.list.find( (categories) => {
+        return categories.tickets.find( (label : any) => {
+          return label.label_id === id;
+        })
+      });
+  }
 
   useEffect( () => {
     setTableList(configList)
@@ -64,20 +76,20 @@ export default function TableLabels({
                     </td>
                   </tr>
                 ) : (
-                  tableList.map((val: any) => (
-                    <tr>
+                  tableList.map((val: any, index : number) => (
+                    <tr key={index}>
                       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                         <p className="text-gray-900 whitespace-no-wrap">
                           {val?.title}
                         </p>
                       </td>
                       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                        <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
+                        <span className="relative inline-block px-3 py-1 leading-tight">
                           <span
                             aria-hidden
-                            className="absolute inset-0 bg-yellow-300 opacity-50 rounded-full"
+                            className={`absolute inset-0  opacity-50  rounded-full ${isUsed(val.id) ? 'bg-yellow-300 ':'bg-green-400'}`}
                           ></span>
-                          <span className="relative">Active</span>
+                          <span className={`font-medium text-black`}>{isUsed(val.id) ? 'Active' : 'In-active'}</span>
                         </span>
                       </td>
 
@@ -85,14 +97,16 @@ export default function TableLabels({
                         <button
                           onClick={() => onUpdate?.(val?.id, "L")}
                           type="button"
-                          className="mr-3 text-sm bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-2 rounded focus:outline-none focus:shadow-outline"
+                          className="disabled:bg-yellow-300 disabled:cursor-not-allowed cursor-pointer mr-3 text-sm bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-2 rounded focus:outline-none focus:shadow-outline"
+                          disabled={isUsed(val.id)}
                         >
                           <EditPencil />
                         </button>
                         <button
                           onClick={() => onDelete?.(val?.id, "L")}
                           type="button"
-                          className="text-sm bg-red-500 hover:bg-red-700 text-white py-1 px-2 rounded focus:outline-none focus:shadow-outline"
+                          className="disabled:bg-red-300 disabled:cursor-not-allowed cursor-pointer text-sm bg-red-500 hover:bg-red-700 text-white py-1 px-2 rounded focus:outline-none focus:shadow-outline"
+                          disabled={isUsed(val.id)}
                         >
                           <Trash />
                         </button>
