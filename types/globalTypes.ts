@@ -75,7 +75,8 @@ export type TicketFormPartial = Partial<TicketFormTypes>
 
 
 export interface ModalContentActions {
-    isUpdate? : boolean;
+    isUpdate ?: boolean;
+    canSubmit ?: boolean;
     submitModal ?: (e : FormEvent) => void;
     closeModal ?: () => void;
 }

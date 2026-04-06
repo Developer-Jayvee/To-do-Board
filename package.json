@@ -16,9 +16,11 @@
     "iconoir-react": "^7.11.0",
     "isbot": "^5.1.36",
     "react": "^19.2.4",
+    "react-dialog-confirm": "^2.0.0",
     "react-dom": "^19.2.4",
     "react-redux": "^9.2.0",
     "react-router": "7.13.2",
+    "react-spinners": "^0.17.0",
     "use-debounce": "^10.1.1"
   },
   "devDependencies": {

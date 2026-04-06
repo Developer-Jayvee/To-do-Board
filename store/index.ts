@@ -1,12 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./auth/AuthSlice";
 import ticketReducer from "./tickets/TicketSlice"
+import moduleReducer from "./module/ModuleSlice"
 import { authMiddleware } from "./middlewares/authMiddleware";
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
-    ticket:ticketReducer
+    ticket:ticketReducer,
+    module : moduleReducer
   },
   middleware: (getDefaultmiddleware) =>
     getDefaultmiddleware().concat(authMiddleware),

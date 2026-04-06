@@ -6,6 +6,7 @@
 body {
   width: 100%;
   height: 100vh;
+  position: relative;
 }
 textarea{
   padding:10px;
