@@ -1,4 +1,4 @@
-import { ChatLines } from "iconoir-react";
+import { ChatLines, OpenInWindow } from "iconoir-react";
 import { useId, type ChangeEvent } from "react";
 import type { TicketForm } from "types/globalTypes";
 
@@ -20,13 +20,13 @@ export default function Ticket({ id, details, onOpen }: TicketProps) {
   return (
     <div
       id={divID}
-      className="ticket-card bg-white shadow-lg p-2 flex flex-col gap-2 cursor-pointer rounded-lg"
+      className="ticket-card bg-white shadow-lg p-2 flex flex-col gap-2 cursor-grab rounded-lg hover:scale-105 transition-transform delay-150"
       draggable="true"
       onDragStart={(e) => {
         e.currentTarget.classList.add('opacity-1')
         startDrag(e);
       }}
-      onClick={() => onOpen?.(id)}
+      
     >
       <div className="ticket-header grid grid-cols-[1fr_70px] ">
         <span className=" text-gray-500 text-sm mb-2"> {category?.title} </span>
@@ -51,7 +51,7 @@ export default function Ticket({ id, details, onOpen }: TicketProps) {
             className="profile-image rounded-full w-6 h-6"
           />
         </div>
-        <ChatLines />
+        <OpenInWindow onClick={() => onOpen?.(id)} className="cursor-pointer hover:scale-110 transition-transform" />
       </div>
     </div>
   );

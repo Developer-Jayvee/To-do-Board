@@ -122,14 +122,15 @@ export default function InputDate({
         </div>
         <div className="dates-container mt-3 grid grid-cols-1 gap-y-2 pb-2">
           <div className="week-list flex justify-around border-b border-gray-200 ">
-            {DAY_LIST.map((val: string) => (
-              <span className="font-extralight text-gray-500">{val}</span>
+            {DAY_LIST.map((val: string , index : number) => (
+              <span key={index} className="font-extralight text-gray-500">{val}</span>
             ))}
           </div>
           <div className="date-list grid grid-cols-7 gap-x-1 gap-y-1">
-            {dateList.map((val: Date) => {
+            {dateList.map((val: Date , index : number) => {
               return (
                 <span
+                key={index}
                   className={`
                     ${selectedDate.month == val.getMonth() + 1 && selectedDate.date == val.getDate() && selectedDate.year == val.getFullYear() ? "bg-gray-200 font-medium" : ""}
                     text-center cursor-pointer hover:outline-1 hover:outline-gray-400

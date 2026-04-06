@@ -25,16 +25,10 @@ export default function TicketModalBody({
       </div>
       <div className="inline--input">
         <label>Expiration Date </label>
-        {/* <input
-          type="date"
-          readOnly={formData.id}
-          value={formData.expiration_date}
-          onChange={(e) => handleInput("expiration_date", e.target.value)}
-          name="expiration_date"
-        /> */}
         <InputDate
           dateInput={formData.expiration_date}
           readOnly={!!formData.id}
+          key={formData.id}
           onChange={(val: string) => handleInput("expiration_date", val)}
         />
       </div>
@@ -43,7 +37,8 @@ export default function TicketModalBody({
         <SelectComponent
           list={categoryOptions}
           defaultKey={formData.category_id}
-          readOnly={!!formData.id}
+          readOnly={false}
+          key={formData.id}
           defaultVal="Choose a category"
           onChange={(value: string) => handleInput('category_id', value)}
         />
@@ -54,6 +49,7 @@ export default function TicketModalBody({
           list={labelOptions}
           defaultKey={formData.label_id}
           readOnly={!!formData.id}
+          key={formData.id}
           defaultVal="Choose a label"
           onChange={(value: string) => handleInput('label_id', value)}
         />

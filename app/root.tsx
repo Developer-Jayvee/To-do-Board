@@ -9,14 +9,17 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
-import { Provider } from "react-redux";
-import store from "../store/index";
+import { Provider, useSelector } from "react-redux";
+import store, { type RootState } from "../store/index";
+import { ClipLoader, ClockLoader } from "react-spinners";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "To Do Board" }, { name: "description", content: "" }];
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
+
+
   return (
     <html lang="en">
       <head>
@@ -26,7 +29,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <Provider store={store}>{children}</Provider>
+        <Provider store={store}>
+          {children}
+        
+        </Provider>
         <ScrollRestoration />
         <Scripts />
       </body>
@@ -35,7 +41,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  
+  return (
+    <>
+      <Outlet/>
+       
+    </>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {

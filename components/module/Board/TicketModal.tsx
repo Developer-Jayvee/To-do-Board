@@ -2,10 +2,10 @@ import TicketModalBody from "components/module/Board/TicketModalBody";
 import "./modalContent.css"
 import Modal from "components/ui/Modal";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { BasicTicketForm } from "src/constants/initialStates";
 import { type AppDispatch } from "store";
-import { createTicket, updateTicket } from "store/tickets/TicketSlice";
+import { createTicket, fetchTickets, getAllTickets, updateTicket } from "store/tickets/TicketSlice";
 import type {
   ModalContentProps,
   TicketForm,
@@ -13,7 +13,7 @@ import type {
 } from "types/globalTypes";
 import { defaultDateFormat } from "utils/utilities";
 import TicketModalFooter from "components/module/Board/TicketModalFooter";
-
+import { setLoading } from "store/module/ModuleSlice";
 
 export default function TicketModal({
   currentID,
@@ -27,10 +27,12 @@ export default function TicketModal({
   const [optionLabel, setOptionLabel] = useState<ListTypes[]>([]);
   const [optionCategory, setOptionCategory] = useState<ListTypes[]>([]);
   const [formData, setFormData] = useState<TicketForm>(BasicTicketForm);
-  
+  const [canSubmit, setCanSubmit] = useState<boolean>(false);
   const handleSubmit = async () => {
     const action = confirm("Are you sure you want to proceed?");
     if (!action) return;
+  
+    dispatch(setLoading(true))
     const dispatchAction = currentID
       ? dispatch(updateTicket({ id: currentID, data: formData }))
       : dispatch(createTicket(formData));
@@ -40,13 +42,18 @@ export default function TicketModal({
       .then((result) => {
         setModalOpen(false);
         setFormData(BasicTicketForm);
+        dispatch(setLoading(false));
       })
       .catch((error) => {
+        console.log(error);
+        
         alert("Failed to save.");
       });
   };
   
   const handleInputs = (name: string, value: string | number) => {
+    if(name === "category_id"){
+    }
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -59,11 +66,17 @@ export default function TicketModal({
   };
 
   
+  useEffect( () => {
+    const copiedData = {...formData};
+    delete copiedData.id;
+    setCanSubmit(
+      Object.values( copiedData).find( (val : any) => val === "" || val === 0) === undefined
+    ) 
+  
+  },[formData])
 
   useEffect(() => {
     if (modalDetails) {
-      console.log(modalDetails);
-      
       setFormData({
         id: modalDetails.id,
         title: modalDetails.title,
@@ -72,7 +85,7 @@ export default function TicketModal({
         category_id: modalDetails.category_id,
         expiration_date: defaultDateFormat(modalDetails.expiration_date),
       });
-    }
+    }else setCanSubmit(true)
   }, [modalDetails]);
 
   useEffect(() => {
@@ -101,7 +114,6 @@ export default function TicketModal({
       }),
     );
   }, [labelList, categoryList]);
-
   return (
     <Modal
       size="L"
@@ -112,7 +124,7 @@ export default function TicketModal({
             <p className="font-medium text-2xl py-2 pl-2">{modalDetails?.title}</p>
         </div>
       ) : null}
-      footer={(<TicketModalFooter closeModal={closeModal} submitModal={handleSubmit}/>)}
+      footer={(<TicketModalFooter canSubmit={canSubmit} closeModal={closeModal} submitModal={handleSubmit}/>)}
       body={
         <TicketModalBody
           formData={formData}

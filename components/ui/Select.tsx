@@ -88,7 +88,7 @@ export default function SelectComponent({
         onClick={toggleOptions}
       >
         <p
-          className={`text-gray-600 ml-1  rounded-full font-semibold  text-center  px-[25px] inline-block `}
+          className={`text-gray-600 ml-1  rounded-full font-semibold  text-center  px-4  inline-block `}
           style={{
             backgroundColor: selectedOption.style.background,
             color: selectedOption.style.color,
@@ -109,7 +109,8 @@ export default function SelectComponent({
           />
         </div>
         <ul className="">
-          {deferredQuery.map((data: ListTypes, index: number) => {
+          {
+          deferredQuery.map((data: ListTypes, index: number) => {
             if (data.value === "" || data.key === "") return;
             return (
               <li
@@ -126,7 +127,7 @@ export default function SelectComponent({
                 }}
               >
                 <span
-                  className={`ml-1  rounded-full font-semibold px-[25px] py-1 inline-block`}
+                  className={`ml-1  rounded-full font-semibold px-4 py-0.5 inline-block`}
                   style={{
                     backgroundColor: data.style.background,
                     color: data.style.color,

@@ -43,7 +43,7 @@ export default function Modal({
 
   return (
     <div
-      className={`modal--wrapper bg-black/50 inset-0 fixed flex justify-center items-center ${isModalOpen ? "" : "hidden"}`}
+      className={`modal--wrapper bg-black/50 inset-0 fixed flex justify-center items-center  ${isModalOpen ? "" : "hidden"}`}
     >
       <div
         className={`modal-container bg-white py-2  rounded-[5px] ${modalSize}  flex flex-col `}

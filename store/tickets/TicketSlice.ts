@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { boardApi } from "services/modules/boardApi";
 import type { RootState } from "store";
+import { setLoading } from "store/module/ModuleSlice";
 import type {
   TicketFormTypes,
   TicketForm,
@@ -41,9 +42,11 @@ export const updateTicketProgress = createAsyncThunk(
   "ticket/updateTicketProgress",
   async ({ id, formData }: ProgressFormData) => {
     const response = await boardApi.progress({ id: id, formData: formData });
+
     return response ?? "";
   },
 );
+
 const ticketSlice = createSlice({
   name: "ticket",
   initialState,
@@ -57,15 +60,24 @@ const ticketSlice = createSlice({
       })
       .addCase(updateTicket.fulfilled, (state, action) => {
         const id = action.payload.id;
+
+        const categoriesWithoutTicket = state.list.map( (item : CategoryReturnForm) => ({
+          ...item,
+          tickets: item.tickets.filter( ticket => ticket.id !== id)
+        }));
         
-        state.list = state.list.map((item) => {
-          return {
-            ...item,
-            tickets: item.tickets.map((data: TicketForm) => {
-              return data?.id === id ? action.payload : data;
-            }),
-          };
-        });
+        state.list = categoriesWithoutTicket.map( (item : CategoryReturnForm) => {
+            if(item.id === action.payload.category_id){
+                return {
+                  ...item,
+                  tickets:[
+                    ...item.tickets,
+                    action.payload
+                  ]
+                }
+            }
+            return item;
+        })
       })
       .addCase(createTicket.pending, (state, action) => {
         state.loading = true;
@@ -83,16 +95,16 @@ const ticketSlice = createSlice({
           return val;
         });
       })
-      .addCase(updateTicketProgress.fulfilled,(state,action) => {
+      .addCase(updateTicketProgress.fulfilled, (state, action) => {
         const ticketID = action.payload.id;
-        state.list = state.list.map( (val : CategoryReturnForm) => {
-            return {
-              ...val,
-              tickets: val.tickets.map( (data : TicketForm) => {
-                return data.id === ticketID ? action.payload : data; 
-              })
-            }
-        })
+        state.list = state.list.map((val: CategoryReturnForm) => {
+          return {
+            ...val,
+            tickets: val.tickets.map((data: TicketForm) => {
+              return data.id === ticketID ? action.payload : data;
+            }),
+          };
+        });
       });
   },
 });
