@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { configApi } from "services/modules/configApi";
 import {
   initialLabelFormState,
@@ -6,10 +7,13 @@ import {
   inititalCategoryFormState,
   inititalCategoryReturnState,
 } from "src/constants/initialStates";
+import { type AppDispatch } from "store";
+import { setLoading } from "store/module/ModuleSlice";
 import type { CategoryReturnForm, ConfigType, LabelReturnForm } from "types/globalTypes";
 
 export function useConfigHandlers() {
   let { category , labels } = configApi;
+  const dispatch = useDispatch<AppDispatch>();
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const [categoryList, setCategoryList] = useState< CategoryReturnForm[]>(inititalCategoryReturnState);
   const [labelList , setLabelList] = useState <LabelReturnForm[]>( initialLabelReturnState);
@@ -17,7 +21,7 @@ export function useConfigHandlers() {
   const [configType, setConfigType] = useState<ConfigType>();
   const [formData, setFormData] = useState(inititalCategoryFormState || initialLabelFormState );
   const [currentID, setCurrentID] = useState<number | null>(null);
-  
+  const [canSubmit,setCanSubmit] = useState<boolean>(false);
   const mainRequest = configType === "C" ? category : labels ;
 
   const createData = (type: ConfigType) => {
@@ -26,11 +30,23 @@ export function useConfigHandlers() {
   };
   const handleSubmit = async (e: SubmitEvent) => {
     e.preventDefault();
-    let response;
     let fetchList :boolean = true;
-    if(currentID) fetchList = await handleUpdate(); 
-    else response = await mainRequest.create(formData);
-    resetAll(fetchList);
+    try {
+      const action = confirm("Are you sure you want to continue?");
+      if(!action) return;
+      let response;
+      dispatch(setLoading(true));
+  
+      if(currentID) fetchList = await handleUpdate(); 
+      else response = await mainRequest.create(formData);
+    
+      
+    } catch (error) {
+      dispatch(setLoading(false))
+    }finally{
+      dispatch(setLoading(false))
+      resetAll(fetchList);
+    }
 
   };
   const handleUpdate = async () : Promise<boolean> => {
@@ -53,23 +69,29 @@ export function useConfigHandlers() {
     return false;
   };
   const handleDelete = async (id: number, type: ConfigType) => {
-    const action = confirm("Are you sure you want to delete this category?");
-    if (!action) return;
-    if (!id) return;
-    
-    let response;
-    if(type === "C") response = await category.delete(id);
-    else if(type === "L") response = await labels.delete(id);
-
-    let list = type === "C" ? categoryList : labelList;
-    const setter = type === "C" ? setCategoryList :  setLabelList;
-    if(list){
-      setter( 
-        (prev) => 
-          prev.filter( (val : any) => val.id !== id )
-      )
-    };
-    resetAll(false);
+    try {
+      const action = confirm("Are you sure you want to delete this category?");
+      if (!action) return;
+      if (!id) return;
+      dispatch(setLoading(true));
+      let response;
+      if(type === "C") response = await category.delete(id);
+      else if(type === "L") response = await labels.delete(id);
+  
+      let list = type === "C" ? categoryList : labelList;
+      const setter = type === "C" ? setCategoryList :  setLabelList;
+      if(list){
+        setter( 
+          (prev) => 
+            prev.filter( (val : any) => val.id !== id )
+        )
+      };
+    } catch (error) {
+      dispatch(setLoading(false));
+    }finally{
+      dispatch(setLoading(false));
+      resetAll(false);
+    }
   };
   const openModalOnUpdate = (id: number, type: ConfigType) => {
     let info;
@@ -90,25 +112,26 @@ export function useConfigHandlers() {
     if(configType === "C") setCategoryList(response);
     else if (configType === "L") setLabelList(response);
   }
-  const getAllList = async () => {
-    const category = await configApi.category.all();
+  const getAllList = async (removeCategoryOpen = true) => {
+    const category = await configApi.category.all(removeCategoryOpen);
     const label = await configApi.labels.all();
     setCategoryList(category);
     setLabelList(label);
   }
-  const fetchList = async () => {
+  const retrieveAllList = async () => {
     const categoryResponse = await category.all();
     const labelResponse = await labels.all();
     setCategoryList(categoryResponse);
     setLabelList(labelResponse);
   };
 
-  const resetAll = (fetchList : boolean = true ) => {
-    if(fetchList) fetchConfigList();
+  const resetAll = (retrieveAllList : boolean = true ) => {
+    if(retrieveAllList) fetchConfigList();
     setFormData(inititalCategoryFormState);
     setCurrentID(null);
     setConfigType("");
     setModalOpen(false);
+    dispatch(setLoading(false));
   };
 
   return {
@@ -117,7 +140,7 @@ export function useConfigHandlers() {
     handleUpdate,
     handleDelete,
     openModalOnUpdate,
-    fetchList,
+    retrieveAllList,
     resetAll,
     isModalOpen,
     setModalOpen,
@@ -134,6 +157,8 @@ export function useConfigHandlers() {
     currentID,
     setCurrentID,
     fetchConfigList,
-    getAllList
+    getAllList,
+    setCanSubmit,
+    canSubmit
   };
 }
