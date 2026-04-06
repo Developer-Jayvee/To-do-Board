@@ -1,6 +1,6 @@
-import ModalForm from "components/Config/ModalForm";
-import TableCategories from "components/Config/TableCategories";
-import TableLabels from "components/Config/TableLabels";
+import ModalForm from "components/module/Config/ModalForm";
+import TableCategories from "components/module/Config/TableCategories";
+import TableLabels from "components/module/Config/TableLabels";
 import Modal from "components/ui/Modal";
 import { useEffect } from "react";
 import {

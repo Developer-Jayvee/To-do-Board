@@ -5,6 +5,7 @@ export default function TicketModalBody({
   formData,
   handleInput,
   labelOptions,
+  categoryOptions,
 }: ModalBodyProps) {
   return (
     <div className="grid grid-cols-2 p-2 gap-x-5">
@@ -16,7 +17,7 @@ export default function TicketModalBody({
           readOnly={!!formData.id}
           value={formData.title}
           type="text"
-          className="border w-full outline-0 text-2xl"
+          className=" w-full outline-0 text-2xl border-0"
           placeholder="Title"
           name="title"
           onChange={(e) => handleInput("title", e.target.value)}
@@ -39,6 +40,13 @@ export default function TicketModalBody({
       </div>
       <div className="inline--input">
         <label>Status</label>
+        <SelectComponent
+          list={categoryOptions}
+          defaultKey={formData.category_id}
+          readOnly={!!formData.id}
+          defaultVal="Choose a category"
+          onChange={(value: string) => handleInput('category_id', value)}
+        />
       </div>
       <div className="inline--input ">
         <label>Label</label>
@@ -47,7 +55,7 @@ export default function TicketModalBody({
           defaultKey={formData.label_id}
           readOnly={!!formData.id}
           defaultVal="Choose a label"
-          onChange={(name: string, value: string) => handleInput(name, value)}
+          onChange={(value: string) => handleInput('label_id', value)}
         />
       </div>
       <div className="inline--input"> &nbsp; </div>
@@ -61,6 +69,7 @@ export default function TicketModalBody({
           onChange={(e) => handleInput("description", e.target.value)}
           rows={5}
           value={formData.description}
+          placeholder="Enter a description"
         ></textarea>
       </div>
     </div>

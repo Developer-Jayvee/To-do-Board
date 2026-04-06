@@ -37,7 +37,7 @@ export default function Modal({
   useEffect(() => {
     if (size === "S") setModalSize("w-[300px]");
     else if (size === "M") setModalSize("w-[500px]");
-    else if (size === "L") setModalSize("w-[700px]");
+    else if (size === "L") setModalSize("w-[600px]");
     else if (size === "XL") setModalSize("w-[800px]");
   }, [size]);
 

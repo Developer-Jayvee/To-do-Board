@@ -18,13 +18,13 @@ interface InputDateProps {
   readOnly: boolean;
   onChange?: (val: string) => void;
 }
-const initDateDetails = (now : Date) => {
+const initDateDetails = (now: Date) => {
   return {
     month: now.getMonth() + 1,
     year: now.getFullYear(),
     date: now.getDate(),
-  }
-}
+  };
+};
 export default function InputDate({
   dateInput,
   readOnly = false,
@@ -36,8 +36,12 @@ export default function InputDate({
     [],
   );
 
-  const [dateDetails, setDateDetails] = useState<DateDetails>(initDateDetails(now));
-  const [selectedDate , setSelectedDate] = useState<DateDetails>(initDateDetails(now));
+  const [dateDetails, setDateDetails] = useState<DateDetails>(
+    initDateDetails(now),
+  );
+  const [selectedDate, setSelectedDate] = useState<DateDetails>(
+    initDateDetails(now),
+  );
   const [isReadOnly, setReadOnly] = useState<boolean>(false);
   const [isOpen, setOpen] = useState<boolean>(false);
   const handleDateState = (data: Partial<DateDetails>) => {
@@ -47,9 +51,9 @@ export default function InputDate({
     }));
   };
 
-  const dateList = useMemo( () => {
-    return dateListCallBack(dateDetails.year,dateDetails.month + 1  );
-  },[dateDetails])
+  const dateList = useMemo(() => {
+    return dateListCallBack(dateDetails.year, dateDetails.month);
+  }, [dateDetails]);
 
   const moveNextMonth = (isAppend = true) => {
     if (isAppend) {
@@ -62,7 +66,13 @@ export default function InputDate({
       handleDateState({ month: dateDetails.month - 1 });
     else handleDateState({ year: dateDetails.year - 1, month: 11 });
   };
-  
+  const resetAll = () => {
+    setDateDetails({
+      month: now.getMonth(),
+      year: now.getFullYear(),
+      date: now.getDate(),
+    });
+  };
   useEffect(() => {
     if (dateInput) {
       const dateGiven = new Date(dateInput);
@@ -74,8 +84,15 @@ export default function InputDate({
     }
     setReadOnly(readOnly);
   }, [dateInput, readOnly]);
-  useEffect( () => console.log(selectedDate),[selectedDate])
-  return (  
+
+  useEffect(() => {
+    if (!isOpen) {
+      resetAll();
+    } else {
+      onChange?.(`${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`);
+    }
+  }, [isOpen]);
+  return (
     <div className="relative" onMouseLeave={() => setOpen(false)}>
       <div
         className="w-full border custom-input"
@@ -85,7 +102,7 @@ export default function InputDate({
           className={`input-display ${isReadOnly ? "cursor-not-allowed" : "cursor-pointer"}`}
         >
           <p>
-            {selectedDate.month }/{selectedDate.date}/{selectedDate.year}
+            {selectedDate.month}/{selectedDate.date}/{selectedDate.year}
           </p>
         </div>
       </div>
@@ -109,23 +126,23 @@ export default function InputDate({
               <span className="font-extralight text-gray-500">{val}</span>
             ))}
           </div>
-          <div className="date-list grid grid-cols-7 gap-y-1">
+          <div className="date-list grid grid-cols-7 gap-x-1 gap-y-1">
             {dateList.map((val: Date) => {
               return (
                 <span
                   className={`
-                    ${selectedDate.month == val.getMonth()   && selectedDate.date == val.getDate() && selectedDate.year == val.getFullYear() ? "bg-gray-200 font-medium" : ""}
+                    ${selectedDate.month == val.getMonth() + 1 && selectedDate.date == val.getDate() && selectedDate.year == val.getFullYear() ? "bg-gray-200 font-medium" : ""}
                     text-center cursor-pointer hover:outline-1 hover:outline-gray-400
                 `}
                   onClick={() => {
                     setSelectedDate({
-                      month: val.getMonth() ,
+                      month: val.getMonth() + 1,
                       year: val.getFullYear(),
                       date: val.getDate(),
                     });
                     setOpen(false);
                     onChange?.(
-                      `${val.getFullYear()}-${val.getMonth()}-${val.getDate()}`,
+                      `${val.getFullYear()}-${val.getMonth() + 1}-${val.getDate()}`,
                     );
                   }}
                 >
