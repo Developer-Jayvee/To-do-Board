@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { configApi } from "services/modules/configApi";
 import {
@@ -9,7 +9,8 @@ import {
 } from "src/constants/initialStates";
 import { type AppDispatch } from "store";
 import { setLoading } from "store/module/ModuleSlice";
-import type { CategoryReturnForm, ConfigType, LabelReturnForm } from "types/globalTypes";
+import type { CategoryForm, CategoryReturnForm, ConfigType, LabelReturnForm } from "types/globalTypes";
+import { nonCaseSensitiveSearch } from "utils/utilities";
 
 export function useConfigHandlers() {
   let { category , labels } = configApi;
@@ -19,7 +20,7 @@ export function useConfigHandlers() {
   const [labelList , setLabelList] = useState <LabelReturnForm[]>( initialLabelReturnState);
   const [modalTitle, setModalTitle] = useState<string>("Category");
   const [configType, setConfigType] = useState<ConfigType>();
-  const [formData, setFormData] = useState(inititalCategoryFormState || initialLabelFormState );
+  const [formData, setFormData] = useState( initialLabelFormState );
   const [currentID, setCurrentID] = useState<number | null>(null);
   const [canSubmit,setCanSubmit] = useState<boolean>(false);
   const mainRequest = configType === "C" ? category : labels ;
@@ -40,7 +41,7 @@ export function useConfigHandlers() {
       if(currentID) fetchList = await handleUpdate(); 
       else response = await mainRequest.create(formData);
     
-      
+      if(!fetchList) return;
     } catch (error) {
       dispatch(setLoading(false))
     }finally{
@@ -51,14 +52,31 @@ export function useConfigHandlers() {
   };
   const handleUpdate = async () : Promise<boolean> => {
     if (!currentID) return true;
-    const response = await mainRequest.update(currentID,formData);
+    const copiedForm = Object.assign(formData)
+    
+    let list = configType === "C" ? categoryList : labelList;
+
+
+    const isFormAlreadyExist = list.filter( (data) => data.id !== currentID).find((val) => {
+      return nonCaseSensitiveSearch(val.title,formData.title)
+    } )
+   
+    if(isFormAlreadyExist) {
+      alert(`${formData.title} is already used`);
+      return true;
+    }
+    const data = list.find((data) => data.id === currentID)?.title === formData.title;
+    if(data) delete copiedForm.title;
+    
+    const response = await mainRequest.update(currentID,copiedForm);
+    
     if(!response){
        resetAll();
        return true;
     }
     const returnID = response.id;
-    let list = configType === "C" ? categoryList : labelList;
     let key =  list.findIndex( (val : any) => val.id === returnID);
+   
     if(key !== undefined || key !== null){ 
       let setter = configType === "L" ? setLabelList : setCategoryList;
       setter(
@@ -66,6 +84,7 @@ export function useConfigHandlers() {
           prev.map( (item,index) => index === key ? response : item)
       )
     }
+    await alert('Successfully updated.');
     return false;
   };
   const handleDelete = async (id: number, type: ConfigType) => {
@@ -87,8 +106,10 @@ export function useConfigHandlers() {
         )
       };
     } catch (error) {
+      alert('Error Occured').th
       dispatch(setLoading(false));
     }finally{
+      alert('Successfully deleted')
       dispatch(setLoading(false));
       resetAll(false);
     }
@@ -99,13 +120,22 @@ export function useConfigHandlers() {
     else if (type === "L") info = labelList.find((val: any) => val?.id === id);
     
     if (!info) return;
-
+    
+    console.log({
+       title: info.title,
+      bgColor:info.bgColor ?? "#ffffff",
+      textColor:info.textColor ?? "#000000"
+    });
+    
     setConfigType(type);
     setModalOpen(true);
     setCurrentID(id);
-    setFormData({
+    setFormData((prev) => ({
+      ...prev,
       title: info.title,
-    });
+      bgColor:info.bgColor ,
+      textColor:info.textColor 
+    }));
   };
   const fetchConfigList = async ( ) => {
     const response = await mainRequest.all();

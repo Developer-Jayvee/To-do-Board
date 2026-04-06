@@ -3,7 +3,7 @@ import TableCategories from "components/module/Config/TableCategories";
 import TableLabels from "components/module/Config/TableLabels";
 import Loader from "components/ui/Loader";
 import Modal from "components/ui/Modal";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   initialLabelFormState,
@@ -35,7 +35,6 @@ export default function ConfigPage() {
   } = useConfigHandlers();
 
   const dispatch = useDispatch<AppDispatch>();
-
   
   useEffect(() =>{
     dispatch(fetchTickets());
@@ -48,7 +47,7 @@ export default function ConfigPage() {
 
   useEffect( () => {
     setCanSubmit(
-      formData.title.trim() !== ""
+      formData.title.trim() !== "" 
     );
   },[formData])
   useEffect(() => {
@@ -84,13 +83,14 @@ export default function ConfigPage() {
         />
       </div>
       <Modal
-        size="M"
+        size="L"
         isModalOpen={isModalOpen}
         closeState={setModalOpen}
         body={
           <ModalForm
             canSubmit={canSubmit}
             title={modalTitle}
+            hasColorPicker={configType === 'C' ? false : true}
             setToOpen={setModalOpen}
             setFormInputs={setFormData}
             formInput={formData}

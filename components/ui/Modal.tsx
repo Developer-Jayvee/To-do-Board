@@ -32,6 +32,8 @@ export default function Modal({
   isModalOpen = false,
   closeState,
 }: ModalProps) {
+
+  
   const [modalSize, setModalSize] = useState<string>("w-[300px]");
 
   useEffect(() => {
@@ -40,7 +42,10 @@ export default function Modal({
     else if (size === "L") setModalSize("w-[600px]");
     else if (size === "XL") setModalSize("w-[800px]");
   }, [size]);
-
+  if(!isModalOpen){
+    return (<p></p>)
+  }
+  
   return (
     <div
       className={`modal--wrapper bg-black/50 inset-0 fixed flex justify-center items-center  ${isModalOpen ? "" : "hidden"}`}

@@ -26,7 +26,7 @@ export default function TableLabels({
         return categories.tickets.find( (label : any) => {
           return label.label_id === id;
         })
-      });
+      })?.id;
   }
 
   useEffect( () => {
@@ -40,7 +40,7 @@ export default function TableLabels({
       <div className="content  p-3 ">
         <div className="filter">
           <button
-            className="btn-primary flex items-center gap-2"
+            className="btn-primary flex items-center gap-2 cursor-pointer"
             onClick={() => onOpenModal?.("L")}
           >
             <span>
@@ -79,7 +79,7 @@ export default function TableLabels({
                   tableList.map((val: any, index : number) => (
                     <tr key={index}>
                       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                        <p className="text-gray-900 whitespace-no-wrap">
+                        <p className="text-gray-900 whitespace-no-wrap py-1 align-middle font-semibold text-center rounded-full" style={{ backgroundColor: val.bgColor , color : val.textColor}}>
                           {val?.title}
                         </p>
                       </td>
@@ -98,7 +98,7 @@ export default function TableLabels({
                           onClick={() => onUpdate?.(val?.id, "L")}
                           type="button"
                           className="disabled:bg-yellow-300 disabled:cursor-not-allowed cursor-pointer mr-3 text-sm bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-2 rounded focus:outline-none focus:shadow-outline"
-                          disabled={isUsed(val.id)}
+                          disabled={!!isUsed(val.id)}
                         >
                           <EditPencil />
                         </button>
@@ -106,7 +106,7 @@ export default function TableLabels({
                           onClick={() => onDelete?.(val?.id, "L")}
                           type="button"
                           className="disabled:bg-red-300 disabled:cursor-not-allowed cursor-pointer text-sm bg-red-500 hover:bg-red-700 text-white py-1 px-2 rounded focus:outline-none focus:shadow-outline"
-                          disabled={isUsed(val.id)}
+                          disabled={!!isUsed(val.id)}
                         >
                           <Trash />
                         </button>

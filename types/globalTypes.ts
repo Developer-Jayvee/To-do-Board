@@ -67,6 +67,8 @@ export interface CategoryReturnForm extends TimeStamps {
   code:string;
   title:string;
   sort:number;
+  bgColor?:string;
+  textColor?:string;
   created_by:number;
   tickets: TicketForm[]
 }
