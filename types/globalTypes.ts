@@ -156,4 +156,5 @@ export interface ModalBodyProps {
   handleInput: (name: string, value: string) => void;
   formData: TicketForm;
   labelOptions: { key: string; value: string }[];
+  categoryOptions: { key: string; value: string }[];
 }

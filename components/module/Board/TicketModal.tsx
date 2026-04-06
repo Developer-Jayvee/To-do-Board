@@ -25,6 +25,7 @@ export default function TicketModal({
 }: ModalContentProps){
   const dispatch = useDispatch<AppDispatch>();
   const [optionLabel, setOptionLabel] = useState<ListTypes[]>([]);
+  const [optionCategory, setOptionCategory] = useState<ListTypes[]>([]);
   const [formData, setFormData] = useState<TicketForm>(BasicTicketForm);
   
   const handleSubmit = async () => {
@@ -61,6 +62,8 @@ export default function TicketModal({
 
   useEffect(() => {
     if (modalDetails) {
+      console.log(modalDetails);
+      
       setFormData({
         id: modalDetails.id,
         title: modalDetails.title,
@@ -85,11 +88,23 @@ export default function TicketModal({
         };
       }),
     );
+    setOptionCategory(
+      categoryList.map((val: any) => {
+        return {
+          key: val.id,
+          value: val.title,
+          style: {
+            background: val.bgColor,
+            color: val.textColor,
+          },
+        };
+      }),
+    );
   }, [labelList, categoryList]);
 
   return (
     <Modal
-      size="XL"
+      size="L"
       isModalOpen={isModalOpen}
       closeState={setModalOpen}
       header={modalDetails?.title !== "" ? ( 
@@ -103,6 +118,7 @@ export default function TicketModal({
           formData={formData}
           handleInput={handleInputs}
           labelOptions={optionLabel}
+          categoryOptions={optionCategory}
         />
       }
     />

@@ -35,7 +35,7 @@ const BoardPage = () => {
       title: ticketDetails.title,
       description: ticketDetails.description,
       label_id: ticketDetails.label_id,
-      category_id:0,
+      category_id:ticketDetails.category_id,
       expiration_date: ticketDetails.expiration_date,
     });
     setModalOpen(true);

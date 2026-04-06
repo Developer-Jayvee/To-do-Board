@@ -16,9 +16,9 @@ import type { EventTarget, ListTypes } from "types/globalTypes";
 interface SelectProps {
   list: ListTypes[];
   defaultVal: string;
-  defaultKey: string | number;
+  defaultKey: string | number | undefined;
   readOnly ?:boolean;
-  onChange?: (name: string, value: string) => void;
+  onChange?: (value: string) => void;
 }
 export default function SelectComponent({
   list,
@@ -84,11 +84,11 @@ export default function SelectComponent({
       onMouseLeave={() => setOptionHidden(true)}
     >
       <div
-        className={`placeholder-container border border-gray-300 bg-white px-2 py-1  z-10 ${isReadOnly ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+        className={`placeholder-container border border-gray-300 bg-white  custom-input z-10 ${isReadOnly ? 'cursor-not-allowed' : 'cursor-pointer'}`}
         onClick={toggleOptions}
       >
         <p
-          className={`text-gray-600 ml-1  rounded-full font-semibold  text-center py-1 px-[25px] inline-block `}
+          className={`text-gray-600 ml-1  rounded-full font-semibold  text-center  px-[25px] inline-block `}
           style={{
             backgroundColor: selectedOption.style.background,
             color: selectedOption.style.color,
@@ -122,7 +122,7 @@ export default function SelectComponent({
                     style: data.style,
                   });
                   setOptionHidden(true);
-                  onChange?.("label_id", data.key);
+                  onChange?.( data.key);
                 }}
               >
                 <span
