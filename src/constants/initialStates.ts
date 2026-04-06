@@ -23,6 +23,8 @@ export const inititalCategoryReturnState: CategoryReturnForm[] = [
 ];
 export const inititalCategoryFormState = {
   title: "",
+  bgColor : "#fff",
+  textColor:"black"
 };
 export const initialLabelReturnState = inititalCategoryReturnState;
 export const initialLabelFormState = inititalCategoryFormState;

@@ -36,6 +36,7 @@ export default function TableCategories({
     setTableList(configList);
   }, [configList]);
 
+
   return (
     <div className="w-full border border-gray-300 outline-0grid grid-col-1 gap-[10px]">
       <div className="col-span-1 border-b border-gray-300 p-2">
@@ -44,7 +45,7 @@ export default function TableCategories({
       <div className="content  p-3 ">
         <div className="filter">
           <button
-            className="btn-primary flex items-center gap-2"
+            className="btn-primary flex items-center gap-2 cursor-pointer"
             onClick={() => onOpenModal?.("C")}
           >
             <span>
@@ -69,7 +70,7 @@ export default function TableCategories({
                   </th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody >
                 {tableList.length === 0 ? (
                   <tr>
                     <td
@@ -83,7 +84,7 @@ export default function TableCategories({
                   tableList.map((val: any , index: number) => (
                     <tr key={index}>
                       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                        <p className="text-gray-900 whitespace-no-wrap">
+                        <p className="text-gray-900 whitespace-no-wrap rounded-full ">
                           {val?.title}
                         </p>
                       </td>
