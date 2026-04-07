@@ -9,6 +9,7 @@ import type { LoginFormData } from "types/globalTypes";
 import { useDispatch, useSelector } from "react-redux";
 import { type RootState } from "store";
 import { Link } from "react-router";
+import Swal from "sweetalert2";
 
 const LoginPage = () => {
   const authState = useSelector((state: RootState) => state.auth);
@@ -26,22 +27,38 @@ const LoginPage = () => {
   }, [formData]);
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const action = confirm("Are you sure you want to login?");
-    if (!action) return;
-    try {
-      const formData = new FormData(e.currentTarget);
-      const response = await authApi.login({
-        username: formData.get("username") as string,
-        password: formData.get("password") as string,
-      });
-      if (response) {
-        dispatch({ type: "auth/loginSuccess", payload: response });
+    const self = e.currentTarget;
+    Swal.fire({
+      title:"Proceed to login?",
+      icon:"question",
+      showCancelButton:true,
+      confirmButtonText:"Proceed"
+    })
+    .then(async (result) => {
+      if(result.isConfirmed){
+        const formData = new FormData(self);
+        const response = await authApi.login({
+          username: formData.get("username") as string,
+          password: formData.get("password") as string,
+        }).then( (result) => {
+          dispatch({ type: "auth/loginSuccess", payload: result });
+        }).catch( (error) => {
+          Swal.fire({
+            title:`${error.message ?? 'Error occured while saving'} `,
+            icon:"warning",
+            timer:2000
+          })
+           setFormData(( prev) => ({
+            ...prev,
+            username:"",
+            password:""
+           }))
+        });
+        
+
       }
-    } catch (error) {
-      if (error?.message) {
-        setLoginError(error?.message);
-      }
-    }
+    })
+  
   };
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -56,6 +73,7 @@ const LoginPage = () => {
         </h3>
         <div className="mb-2">
           <FloatingLabel
+            currentValue={formData.username}
             label="Username"
             inputName="username"
             setInputValue={(e) => handleInputChange(e)}
@@ -63,6 +81,7 @@ const LoginPage = () => {
         </div>
         <div className="mb-2">
           <FloatingLabel
+            currentValue={formData.password}
             label="Password"
             inputName="password"
             isPassword={true}
@@ -86,12 +105,12 @@ const LoginPage = () => {
         </span>
         <hr className="mb-[30px]" />
       </div>
-      <Button className="shadow-xs shadow-gray-500 mb-[20px]">
+      {/* <Button className="shadow-xs shadow-gray-500 mb-[20px]">
         <span>
           <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/google/google-original.svg" />
         </span>
         <span>Continue with Google</span>
-      </Button>
+      </Button> */}
       <div className="label--wrapper">
         <i>
           Don't have an account?{" "}

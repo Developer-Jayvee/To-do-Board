@@ -8,7 +8,7 @@ export default function TicketModalBody({
   categoryOptions,
 }: ModalBodyProps) {
   return (
-    <div className="grid grid-cols-2 p-2 gap-x-5">
+    <div className="grid grid-cols-1 sm:grid-cols-2 p-2 gap-x-5">
       <div
         className={`inline--input col-span-2 ${formData.id ? "hidden" : ""} `}
       >
@@ -23,7 +23,7 @@ export default function TicketModalBody({
           onChange={(e) => handleInput("title", e.target.value)}
         />
       </div>
-      <div className="inline--input">
+      <div className="inline--input col-span-2 sm:col-span-1">
         <label>Expiration Date </label>
         <InputDate
           dateInput={formData.expiration_date}
@@ -32,7 +32,7 @@ export default function TicketModalBody({
           onChange={(val: string) => handleInput("expiration_date", val)}
         />
       </div>
-      <div className="inline--input">
+      <div className="inline--input  col-span-2 sm:col-span-1">
         <label>Status</label>
         <SelectComponent
           list={categoryOptions}
@@ -43,7 +43,7 @@ export default function TicketModalBody({
           onChange={(value: string) => handleInput('category_id', value)}
         />
       </div>
-      <div className="inline--input ">
+      <div className="inline--input  col-span-2 sm:col-span-1">
         <label>Label</label>
         <SelectComponent
           list={labelOptions}
@@ -54,7 +54,7 @@ export default function TicketModalBody({
           onChange={(value: string) => handleInput('label_id', value)}
         />
       </div>
-      <div className="inline--input"> &nbsp; </div>
+      <div className="inline--input  col-span-2 sm:col-span-1"> &nbsp; </div>
 
       <div className="inline--input col-span-2 flex flex-col">
         <label className="mb-2">Description</label>

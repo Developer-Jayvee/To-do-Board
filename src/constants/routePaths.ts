@@ -7,6 +7,14 @@ export const RoutePath = {
   CONFIG: "/configurations"
 } as const;
 
+
+export const Routes = {
+  LOGIN : { url : '/login' , name : 'Login' },
+  REGISTER : { url : '/register' , name : 'Register' },
+  BOARD : { url : '/board' , name : 'Board' },
+  HISTORY : { url : '/history' , name : 'History' },
+  CONFIG : { url : '/configurations' , name : 'Configurations' },
+}
 export const Links = {
   board: {
     link : RoutePath.BOARD,

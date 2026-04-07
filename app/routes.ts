@@ -4,7 +4,7 @@ import {
   layout,
   route,
 } from "@react-router/dev/routes";
-import { RoutePath } from "src/constants/routePaths";
+import { RoutePath , Routes } from "src/constants/routePaths";
 export default [
   layout("./layouts/GuestLayout.tsx", [
     index("pages/Login/LoginPage.tsx"),

@@ -19,6 +19,7 @@ export interface LoginFormData {
 }
 export interface FloatingInputTypes {
   inputName: string;
+  currentValue: string | number | null;
   setInputValue?: (e: ChangeEvent<HTMLInputElement>) => void;
   validateInput?: (value: string) => boolean;
 }
