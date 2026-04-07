@@ -47,7 +47,6 @@ export function useConfigHandlers() {
         
           if(!fetchList) return;
 
-
             dispatch(setLoading(false))
             resetAll(fetchList);
             Swal.fire({
@@ -100,7 +99,7 @@ export function useConfigHandlers() {
           prev.map( (item,index) => index === key ? response : item)
       )
     }
-    return false;
+    return true;
   };
   const handleDelete = async (id: number, type: ConfigType) => {
       Swal.fire({
