@@ -1,3 +1,4 @@
+import { levels } from "src/constants";
 
 export const nonCaseSensitiveSearch = (query : string ,text : string ) => {
     return query.toLowerCase().includes(text.toLowerCase());
@@ -27,4 +28,21 @@ export const getAllDaysInMonth = (year : number , month : number) : Date[] => {
   }
 
   return dates;
+}
+
+export const validatePassword = (query : string) => {
+    let regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@.#$!%*?&])[A-Za-z\d@.#$!%*?&]{8,15}$/;
+
+    return regex.test(query);
+}
+
+export function checkPasswordStrength(query : string) {
+    const checks = [
+        /[a-z]/,     // Lowercase
+        /[A-Z]/,     // Uppercase
+        /\d/,        // Digit
+        /[@.#$!%^&*.?]/ // Special character
+    ];
+    let score = checks.reduce((acc, rgx : RegExp) => acc + Number(rgx.test(query)), 0);
+    return score;
 }

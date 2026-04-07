@@ -8,7 +8,7 @@ import { authApi } from "services/modules/authApi";
 import type { LoginFormData } from "types/globalTypes";
 import { useDispatch, useSelector } from "react-redux";
 import { type RootState } from "store";
-import { Link } from "react-router";
+import { Link, redirect } from "react-router";
 import Swal from "sweetalert2";
 
 const LoginPage = () => {
