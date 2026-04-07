@@ -5,6 +5,7 @@ import type { FloatingLabelTypes, FloatingInputAttr } from "types/globalTypes";
 
 export default function FloatingLabel({
   label,
+  currentValue,
   isPassword = false,
   customClassName = "",
   inputName,
@@ -26,6 +27,7 @@ export default function FloatingLabel({
           type={isEyeOpen ? "text" : "password"}
           placeholder=" "
           name={inputName}
+          value={currentValue ?? ""}
           onChange={(e) => {
             setInputValue?.(e);
             validateInput?.(e.target.value);
@@ -60,6 +62,7 @@ export default function FloatingLabel({
         type="text"
         placeholder=" "
         name={inputName}
+        value={currentValue ?? ""}
         onChange={(e) => {
           setInputValue?.(e);
           validateInput?.(e.target.value);

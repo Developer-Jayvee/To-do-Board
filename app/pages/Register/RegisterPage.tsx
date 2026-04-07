@@ -4,6 +4,7 @@ import { useDeferredValue, useEffect, useState, type ChangeEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, redirect } from "react-router";
 import { authApi } from "services/modules/authApi";
+import Swal from "sweetalert2";
 import type {
   RegisterFormDataTypes,
   RegisterFormErrorsTypes,
@@ -42,27 +43,31 @@ const RegisterPage = () => {
   };
 
   const handleSubmit = async () => {
-    const action = confirm("Are you sure you want to register?");
-    if (!action) return;
+    Swal.fire({
+      title:"Are you sure you want to proceed?",
+      icon:"question",
+      showCancelButton:true,
+      confirmButtonText:"Proceed"
+    }).then( async (result) => {
+      if(result.isConfirmed){
+        if (!isPasswordMatch && !canSubmit) return false;
+        try {
+          const response = await authApi.register(formData);
+          if (response) {
+            dispatch({ type: "auth/loginSuccess", payload: response });
+          }
+        } catch (err) {
+          const errorResponse = await err?.errors;
+          setErrors((prev) => ({
+            ...prev,
+            ...errorResponse,
+          }));
+        }
 
-    if (!isPasswordMatch && !canSubmit) return false;
-    try {
-      const response = await authApi.register(formData);
-      if (response) {
-        dispatch({ type: "auth/loginSuccess", payload: response });
       }
-    } catch (err) {
-      const errorResponse = await err?.errors;
-      setErrors((prev) => ({
-        ...prev,
-        ...errorResponse,
-      }));
-    }
-  };
+    })
 
-  useEffect(() => {
-    console.log(errors);
-  }, [errors]);
+  };
   useEffect(() => {
     if (
       formData.name.trim() !== "" &&
@@ -87,7 +92,11 @@ const RegisterPage = () => {
   }, [formData]);
   return (
     <AuthForm title="Register">
+       <h3 className="text-center text-sm font-thin mb-4">
+         to create a new account
+        </h3>
       <FloatingLabel
+        currentValue={formData.name}
         label="Full Name"
         customClassName="mb-3"
         inputName="name"
@@ -96,6 +105,7 @@ const RegisterPage = () => {
         errors={errors.name}
       />
       <FloatingLabel
+      currentValue={formData.email}
         label="Email"
         customClassName="mb-3"
         inputName="email"
@@ -107,6 +117,7 @@ const RegisterPage = () => {
         <span className="text-red-500 text-sm mb-2">Invalid email address</span>
       )}
       <FloatingLabel
+      currentValue={formData.username}
         label="Username"
         customClassName="mb-3"
         inputName="username"
@@ -115,6 +126,7 @@ const RegisterPage = () => {
         errors={errors.username}
       />
       <FloatingLabel
+      currentValue={formData.password}
         attr={{ maxLength: 10 }}
         label="Password"
         isPassword={true}
@@ -125,6 +137,7 @@ const RegisterPage = () => {
         errors={errors.password}
       />
       <FloatingLabel
+      currentValue={formData.confirmPassword}
         attr={{ maxLength: 10 }}
         label="Confirm Password"
         isPassword={true}
