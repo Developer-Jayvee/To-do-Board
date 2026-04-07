@@ -115,7 +115,7 @@ export default function SelectComponent({
             return (
               <li
                 key={index}
-                className={`${selectedOption.key === data.key ? "bg-gray-200" : ""} cursor-pointer hover:bg-gray-200 py-1`}
+                className={`${selectedOption.key === data.key ? "" : ""} cursor-pointer hover:bg-gray-200 py-1`}
                 onClick={() => {
                   setSelectedOption({
                     key: data.key,

@@ -12,10 +12,10 @@ import {
   type SetStateAction,
 } from "react";
 
-type Size = "S" | "M" | "L" | "XL";
+type Size = "AUTO" | "S" | "M" | "L" | "XL";
 
 interface ModalStates {
-  closeState: Dispatch<SetStateAction<boolean>>;
+  closeState?: Dispatch<SetStateAction<boolean>>;
   isModalOpen: boolean;
 }
 interface ModalProps extends ModalStates {
@@ -37,7 +37,8 @@ export default function Modal({
   const [modalSize, setModalSize] = useState<string>("w-[300px]");
 
   useEffect(() => {
-    if (size === "S") setModalSize("w-[300px]");
+    if (size === "AUTO") setModalSize("w-auto");
+    else if (size === "S") setModalSize("w-[300px]");
     else if (size === "M") setModalSize("w-[500px]");
     else if (size === "L") setModalSize("w-[600px]");
     else if (size === "XL") setModalSize("w-[800px]");
