@@ -8,13 +8,16 @@ import {
   updateTicketProgress,
 } from "store/tickets/TicketSlice";
 import { type AppDispatch, type RootState } from "store";
-import type { TicketFormTypes } from "types/globalTypes";
+import type { AlertStatusProps, AlertType, TicketFormTypes } from "types/globalTypes";
 import { BasicTicketForm } from "src/constants/initialStates";
 import { useConfigHandlers } from "src/hooks/useConfigHandlers";
 import TicketModal from "components/module/Board/TicketModal";
 import { ClipLoader, ClockLoader, SyncLoader } from "react-spinners";
 import { setLoading } from "store/module/ModuleSlice";
 import Loader from "components/ui/Loader";
+import AlertModal from "components/ui/AlertModal";
+
+
 
 export const TicketContext = createContext(null);
 export const ModalContentContext = createContext(null);
@@ -48,36 +51,43 @@ const BoardPage = () => {
     setModalOpen(true);
   };
   const dropOver = (event: any, parentDivID: string, catID: number) => {
-    event.preventDefault();
-    const id = event.dataTransfer.getData("ticketID");
-    const ticketInfo = JSON.parse(event.dataTransfer.getData("ticketInfo"));
-
-    const dropOff = event.target.parentNode.querySelector(".ticket-list");
-    const draggedDiv = document.getElementById(id);
-    if (!draggedDiv || ticketInfo.category_id === catID) return;
-    draggedDiv.style.opacity = "1";
-    dispatch(setLoading(true));
-    dispatch(
-      updateTicketProgress({
-        id: ticketInfo.id,
-        formData: {
-          previous: ticketInfo.category_id,
-          next: catID,
-        },
-      }),
-    ).finally(() => dispatch(setLoading(false)));
-    if (!dropOff) {
-      event.currentTarget.querySelector(".ticket-list").appendChild(draggedDiv);
-    } else {
-      event.currentTarget
+    try {
+      event.preventDefault();
+      const id = event.dataTransfer.getData("ticketID");
+      const ticketInfo = JSON.parse(event.dataTransfer.getData("ticketInfo"));
+  
+      const dropOff = event.target.parentNode.querySelector(".ticket-list");
+      const draggedDiv = document.getElementById(id);
+      if (!draggedDiv || ticketInfo.category_id === catID){
+        return;
+      }
+      draggedDiv.style.opacity = "1";
+      dispatch(setLoading(true));
+      
+      if (!dropOff) {
+        event.currentTarget.querySelector(".ticket-list").appendChild(draggedDiv);
+      } else {
+        event.currentTarget
         .querySelector(`#${parentDivID}`)
         .appendChild(draggedDiv);
+      }
+      dispatch(
+        updateTicketProgress({
+          id: ticketInfo.id,
+          formData: {
+            previous: ticketInfo.category_id,
+            next: catID,
+          },
+        }),
+      ).finally(() => dispatch(setLoading(false)));
+    } catch (error) {
+      alert('Error occured while moving ticket')
     }
   };
   const dragOver = (e: DragEvent) => {
     e.preventDefault();
   };
-  const dragEnd = (e: any) => {
+  const dragEnd = (e: any , catID : number) => {
     const parentNode = e.currentTarget.querySelector(".ticket-list");
     const childrenNode = parentNode.querySelectorAll(".ticket-card");
     childrenNode.forEach((child) => child.classList.remove("opacity-1"));
@@ -102,7 +112,7 @@ const BoardPage = () => {
       setCurrentID(null);
     }
   }, [isModalOpen]);
-
+ 
   return (
     <>
       <div className="grid grid-cols-1 gap-4 relative">
@@ -134,7 +144,7 @@ const BoardPage = () => {
                   title={parentVal?.title}
                   dragOver={(e) => dragOver(e)}
                   dropOver={(e) => dropOver(e, `d${parentIndex}`, parentVal.id)}
-                  dragEnd={(e) => dragEnd(e)}
+                  dragEnd={(e) => dragEnd(e , parentVal.id)}
                 >
                   {parentVal?.tickets?.map(
                     (childVal: any, childIndex: number) => (

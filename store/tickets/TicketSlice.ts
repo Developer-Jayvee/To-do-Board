@@ -26,9 +26,18 @@ export const fetchTickets = createAsyncThunk("ticket/getTickets", async () => {
 export const updateTicket = createAsyncThunk<
   TicketForm,
   { id: number; data: TicketFormPartial }
->("tickets/updateTicket", async ({ id, data }) => {
-  const response = await boardApi.update(id, data);
-  return response ?? [];
+>("tickets/updateTicket", async ({ id, data },{dispatch }) => {
+  try {
+    
+    dispatch(setLoading(true))
+    const response = await boardApi.update(id, data)
+    dispatch(setLoading(false))
+    
+    return response ?? [];
+    
+  } catch (error) {
+    dispatch(setLoading(false))
+  }
 });
 
 export const createTicket = createAsyncThunk<TicketForm, TicketFormTypes>(
@@ -55,10 +64,19 @@ const ticketSlice = createSlice({
   },
   extraReducers(builder) {
     builder
+      .addCase(fetchTickets.pending,(state,action) => {
+        state.loading = true
+      })
       .addCase(fetchTickets.fulfilled, (state, action) => {
+        state.loading = false
+        
         state.list = action.payload;
       })
+      .addCase(updateTicket.pending,(state) => {
+        state.loading = true
+      })
       .addCase(updateTicket.fulfilled, (state, action) => {
+        state.loading = false
         const id = action.payload.id;
 
         const categoriesWithoutTicket = state.list.map( (item : CategoryReturnForm) => ({
@@ -95,7 +113,11 @@ const ticketSlice = createSlice({
           return val;
         });
       })
+      .addCase(updateTicketProgress.pending,(state,action) => {
+        state.loading = true
+      })
       .addCase(updateTicketProgress.fulfilled, (state, action) => {
+        state.loading = false
         const ticketID = action.payload.id;
         state.list = state.list.map((val: CategoryReturnForm) => {
           return {
@@ -110,5 +132,4 @@ const ticketSlice = createSlice({
 });
 
 export const getAllTickets = (state: RootState) => state.ticket.list;
-
 export default ticketSlice.reducer;

@@ -4,7 +4,7 @@ import Modal from "components/ui/Modal";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BasicTicketForm } from "src/constants/initialStates";
-import { type AppDispatch } from "store";
+import { type AppDispatch, type RootState } from "store";
 import { createTicket, fetchTickets, getAllTickets, updateTicket } from "store/tickets/TicketSlice";
 import type {
   ModalContentProps,
@@ -13,8 +13,7 @@ import type {
 } from "types/globalTypes";
 import { defaultDateFormat } from "utils/utilities";
 import TicketModalFooter from "components/module/Board/TicketModalFooter";
-import { setLoading } from "store/module/ModuleSlice";
-
+import Swal from "sweetalert2"
 export default function TicketModal({
   currentID,
   isModalOpen,
@@ -24,31 +23,45 @@ export default function TicketModal({
   categoryList,
 }: ModalContentProps){
   const dispatch = useDispatch<AppDispatch>();
+  const { loading } = useSelector( (state : RootState) => state.ticket)
   const [optionLabel, setOptionLabel] = useState<ListTypes[]>([]);
   const [optionCategory, setOptionCategory] = useState<ListTypes[]>([]);
   const [formData, setFormData] = useState<TicketForm>(BasicTicketForm);
   const [canSubmit, setCanSubmit] = useState<boolean>(false);
   const handleSubmit = async () => {
-    const action = confirm("Are you sure you want to proceed?");
-    if (!action) return;
-  
-    dispatch(setLoading(true))
-    const dispatchAction = currentID
-      ? dispatch(updateTicket({ id: currentID, data: formData }))
-      : dispatch(createTicket(formData));
+      Swal.fire({
+        icon: "warning",
+        title: "Are you sure you want to proceed" ,
+        showCancelButton: true,
+      }).then( (result) => {
+          if(result.isConfirmed){
+            const dispatchAction = currentID
+              ? dispatch(updateTicket({ id: currentID, data: formData }))
+              : dispatch(createTicket(formData));
+            
+            Swal.fire({
+              icon:"success",
+              title:"Successfully saved",
+              timer:1000
+            }).then( () => {
+              dispatchAction
+              .unwrap()
+              .then( () => {
+                setModalOpen(false);
+                setFormData(BasicTicketForm);
+              })
+              .catch( (error) => {
+                Swal.fire({
+                  icon:"error",
+                  title:"Error occured while saving"
+                })
+              })
 
-    dispatchAction
-      .unwrap()
-      .then((result) => {
-        setModalOpen(false);
-        setFormData(BasicTicketForm);
-        dispatch(setLoading(false));
+            })
+
+          }
       })
-      .catch((error) => {
-        console.log(error);
-        
-        alert("Failed to save.");
-      });
+ 
   };
   
   const handleInputs = (name: string, value: string | number) => {
@@ -114,6 +127,8 @@ export default function TicketModal({
       }),
     );
   }, [labelList, categoryList]);
+
+ 
   return (
     <Modal
       size="L"

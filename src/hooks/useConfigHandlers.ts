@@ -9,6 +9,7 @@ import {
 } from "src/constants/initialStates";
 import { type AppDispatch } from "store";
 import { setLoading } from "store/module/ModuleSlice";
+import Swal from "sweetalert2";
 import type { CategoryForm, CategoryReturnForm, ConfigType, LabelReturnForm } from "types/globalTypes";
 import { nonCaseSensitiveSearch } from "utils/utilities";
 
@@ -32,22 +33,40 @@ export function useConfigHandlers() {
   const handleSubmit = async (e: SubmitEvent) => {
     e.preventDefault();
     let fetchList :boolean = true;
-    try {
-      const action = confirm("Are you sure you want to continue?");
-      if(!action) return;
-      let response;
-      dispatch(setLoading(true));
-  
-      if(currentID) fetchList = await handleUpdate(); 
-      else response = await mainRequest.create(formData);
-    
-      if(!fetchList) return;
-    } catch (error) {
-      dispatch(setLoading(false))
-    }finally{
-      dispatch(setLoading(false))
-      resetAll(fetchList);
-    }
+      Swal.fire({
+        title:"Are you sure you want to continue ?",
+        icon:"warning",
+        showCancelButton:true
+      }).then( async (result) => {
+        if(result.isConfirmed){
+
+          let response;
+        
+          if(currentID) fetchList = await handleUpdate(); 
+          else response = await mainRequest.create(formData);
+        
+          if(!fetchList) return;
+
+
+            dispatch(setLoading(false))
+            resetAll(fetchList);
+            Swal.fire({
+              title:"Successfully saved.",
+              icon:"success",
+              timer:1000
+            })
+        }
+
+
+      }).catch( (error) => {
+        Swal.fire({
+          title:error.error ?? error.message ??  "Error Occured",
+          icon:"error",
+          timer:2000
+        })
+      })
+      
+   
 
   };
   const handleUpdate = async () : Promise<boolean> => {
@@ -62,11 +81,8 @@ export function useConfigHandlers() {
     } )
    
     if(isFormAlreadyExist) {
-      alert(`${formData.title} is already used`);
-      return true;
+      throw new Error(`${formData.title} is already used.`);
     }
-    const data = list.find((data) => data.id === currentID)?.title === formData.title;
-    if(data) delete copiedForm.title;
     
     const response = await mainRequest.update(currentID,copiedForm);
     
@@ -84,35 +100,52 @@ export function useConfigHandlers() {
           prev.map( (item,index) => index === key ? response : item)
       )
     }
-    await alert('Successfully updated.');
     return false;
   };
   const handleDelete = async (id: number, type: ConfigType) => {
-    try {
-      const action = confirm("Are you sure you want to delete this category?");
-      if (!action) return;
-      if (!id) return;
-      dispatch(setLoading(true));
-      let response;
-      if(type === "C") response = await category.delete(id);
-      else if(type === "L") response = await labels.delete(id);
-  
-      let list = type === "C" ? categoryList : labelList;
-      const setter = type === "C" ? setCategoryList :  setLabelList;
-      if(list){
-        setter( 
-          (prev) => 
-            prev.filter( (val : any) => val.id !== id )
-        )
-      };
-    } catch (error) {
-      alert('Error Occured').th
-      dispatch(setLoading(false));
-    }finally{
-      alert('Successfully deleted')
-      dispatch(setLoading(false));
-      resetAll(false);
-    }
+      Swal.fire({
+        title:`Are you sure you want to proceed?`,
+        icon:"warning",
+        showCancelButton:true,
+        cancelButtonText:"No",
+        confirmButtonText:"Yes"
+      })
+      .then( async (result) => {
+       
+        if(result.isConfirmed){
+          if (!id) return;
+          dispatch(setLoading(true));
+          let response;
+          if(type === "C") response = await category.delete(id);
+          else if(type === "L") response = await labels.delete(id);
+      
+          let list = type === "C" ? categoryList : labelList;
+          const setter = type === "C" ? setCategoryList :  setLabelList;
+          if(list){
+            setter( 
+              (prev) => 
+                prev.filter( (val : any) => val.id !== id )
+            )
+          };
+          Swal.fire({
+            icon:"success",
+            title:"Successfully deleted"
+            }).finally( () => {
+              dispatch(setLoading(false));
+              resetAll(false);
+            })
+
+        }
+
+      })
+      .catch((error) => {
+        Swal.fire({
+          icon:"error",
+          title:error.error ?? "Error Occured",
+          timer:2000
+        })
+      })
+   
   };
   const openModalOnUpdate = (id: number, type: ConfigType) => {
     let info;
@@ -149,10 +182,18 @@ export function useConfigHandlers() {
     setLabelList(label);
   }
   const retrieveAllList = async () => {
-    const categoryResponse = await category.all();
-    const labelResponse = await labels.all();
-    setCategoryList(categoryResponse);
-    setLabelList(labelResponse);
+    try {
+      const categoryResponse = await category.all();
+      const labelResponse = await labels.all();
+      setCategoryList(categoryResponse);
+      setLabelList(labelResponse);
+    } catch (error : any) {
+      Swal.fire({
+        title:error.message ?? error.error ?? "Error Occured",
+        icon:"error",
+        timer:2000
+      })
+    }
   };
 
   const resetAll = (retrieveAllList : boolean = true ) => {

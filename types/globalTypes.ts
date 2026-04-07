@@ -161,3 +161,11 @@ export interface ModalBodyProps {
   labelOptions: { key: string; value: string }[];
   categoryOptions: { key: string; value: string }[];
 }
+
+export type Size = "AUTO" | "S" | "M" | "L" | "XL";
+export type AlertType = "warning" | "success" | "info";
+export interface AlertStatusProps {
+  type: AlertType;
+  isOpen : boolean;
+  message : string;
+}
