@@ -34,7 +34,6 @@ export default function TicketModal({
   const [optionCategory, setOptionCategory] = useState<ListTypes[]>([]);
   const [formData, setFormData] = useState<TicketForm>(BasicTicketForm);
   const [canSubmit, setCanSubmit] = useState<boolean>(false);
-  const descriptionChanges = useRef<string | null>(null);
   const handleSubmit = async () => {
     Swal.fire({
       icon: "warning",
@@ -51,11 +50,12 @@ export default function TicketModal({
           title: "Successfully saved",
           timer: 1000,
         }).then(() => {
-          removeFromStorage()
+         
           dispatchAction
             .unwrap()
             .then(() => {
               setModalOpen(false);
+              removeFromStorage()
               setFormData(BasicTicketForm);
             })
             .catch((error) => {
@@ -106,17 +106,17 @@ export default function TicketModal({
     
   };
   const saveToStorage = () => {
+    const localName = currentID || DESCRIPTION_NAME
     if(formData.description === ""){
       return removeFromStorage()
     }
     const desc = formData.description;
-    descriptionChanges.current = formData.description;
-    localStorage.setItem(DESCRIPTION_NAME,desc);
+    localStorage.setItem(localName as string ,desc);
   }
   const removeFromStorage = () => {
-    if(localStorage.getItem(DESCRIPTION_NAME)){
-      descriptionChanges.current = null;
-      localStorage.removeItem(DESCRIPTION_NAME);
+    const localName = currentID || DESCRIPTION_NAME
+    if(localStorage.getItem(localName as string)){
+      localStorage.removeItem(localName as string);
     }
   }
   useEffect(() => {
@@ -134,17 +134,17 @@ export default function TicketModal({
  
  
   useEffect(() => {
+    const description =localStorage.getItem(DESCRIPTION_NAME);
     if (modalDetails?.id) {
       setFormData({
         id: modalDetails.id,
         title: modalDetails.title,
-        description: modalDetails.description,
+        description: description ?? modalDetails.description,
         label_id: modalDetails.label_id,
         category_id: modalDetails.category_id,
         expiration_date: defaultDateFormat(modalDetails.expiration_date),
       });
     } else {
-      const description =localStorage.getItem(DESCRIPTION_NAME);
       if(description){
         setFormData( (prev) => ({ ...prev , description: description}))
       }
@@ -202,6 +202,7 @@ export default function TicketModal({
       }
       body={
         <TicketModalBody
+          isModalOpen={isModalOpen}
           formData={formData}
           handleInput={handleInputs}
           labelOptions={optionLabel}

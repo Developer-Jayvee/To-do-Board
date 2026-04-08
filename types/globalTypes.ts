@@ -163,8 +163,8 @@ export interface ModalBodyProps {
   formData: TicketForm;
   labelOptions: { key: string; value: string }[];
   categoryOptions: { key: string; value: string }[];
+  isModalOpen ?: boolean;
 }
-
 export type Size = "AUTO" | "S" | "M" | "L" | "XL";
 export type AlertType = "warning" | "success" | "info";
 export interface AlertStatusProps {

@@ -1,13 +1,26 @@
 import InputDate from "components/ui/InputDate";
 import SelectComponent from "components/ui/Select";
 import { CheckCircle } from "iconoir-react";
-import type { ModalBodyProps } from "types/globalTypes";
+import { useEffect, useRef, useState } from "react";
+import { ClockLoader } from "react-spinners";
+import type { TicketForm,  ModalBodyProps } from "types/globalTypes";
 export default function TicketModalBody({
   formData,
   handleInput,
   labelOptions,
   categoryOptions,
+  isModalOpen
 }: ModalBodyProps) {
+  const inputRef = useRef<TicketForm | null>(null);
+  const [isLoading, setLoading ] = useState<boolean>(false);
+  useEffect( () => {
+    if(isModalOpen) setLoading(true)
+  },[isModalOpen])
+
+  if(!isLoading){
+    return <ClockLoader color="black" size={30}/>
+  }
+ 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 p-2 gap-x-5">
       <div
