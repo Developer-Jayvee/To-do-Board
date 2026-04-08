@@ -16,10 +16,14 @@ import type {
   TicketForm,
   ListTypes,
 } from "types/globalTypes";
-import { defaultDateFormat } from "utils/utilities";
+import { checkDayGap, defaultDateFormat } from "utils/utilities";
 import TicketModalFooter from "components/module/Board/TicketModalFooter";
 import Swal from "sweetalert2";
-import { DESCRIPTION_NAME } from "src/constants";
+import {
+  DESCRIPTION_NAME,
+  TICKET_STATUS_LEVEL,
+  TICKET_STATUS_LEVEL_NAME,
+} from "src/constants";
 export default function TicketModal({
   currentID,
   isModalOpen,
@@ -34,6 +38,9 @@ export default function TicketModal({
   const [optionCategory, setOptionCategory] = useState<ListTypes[]>([]);
   const [formData, setFormData] = useState<TicketForm>(BasicTicketForm);
   const [canSubmit, setCanSubmit] = useState<boolean>(false);
+  const [isTicketClosed , setTicketClosed] = useState<boolean>(false);
+  const [ticketColorStatus, setTicketColorStatus] = useState("bg-green-500");
+  const [ticketStatus, setTicketStatus] = useState("Good");
   const handleSubmit = async () => {
     Swal.fire({
       icon: "warning",
@@ -50,12 +57,11 @@ export default function TicketModal({
           title: "Successfully saved",
           timer: 1000,
         }).then(() => {
-         
           dispatchAction
             .unwrap()
             .then(() => {
               setModalOpen(false);
-              removeFromStorage()
+              removeFromStorage();
               setFormData(BasicTicketForm);
             })
             .catch((error) => {
@@ -80,10 +86,10 @@ export default function TicketModal({
 
   const closeModal = () => {
     if (
-      formData.category_id ||
+      ( formData.category_id ||
       formData.description !== "" ||
       formData.label_id ||
-      formData.title !== ""
+      formData.title !== "" ) && !isTicketClosed
     ) {
       Swal.fire({
         title: "Are you sure you want to leave?",
@@ -103,22 +109,21 @@ export default function TicketModal({
       setFormData(BasicTicketForm);
       removeFromStorage();
     }
-    
   };
   const saveToStorage = () => {
-    const localName = currentID || DESCRIPTION_NAME
-    if(formData.description === ""){
-      return removeFromStorage()
+    const localName = currentID || DESCRIPTION_NAME;
+    if (formData.description === "") {
+      return removeFromStorage();
     }
     const desc = formData.description;
-    localStorage.setItem(localName as string ,desc);
-  }
+    localStorage.setItem(localName as string, desc);
+  };
   const removeFromStorage = () => {
-    const localName = currentID || DESCRIPTION_NAME
-    if(localStorage.getItem(localName as string)){
+    const localName = currentID || DESCRIPTION_NAME;
+    if (localStorage.getItem(localName as string)) {
       localStorage.removeItem(localName as string);
     }
-  }
+  };
   useEffect(() => {
     const copiedData = { ...formData };
     delete copiedData.id;
@@ -126,15 +131,24 @@ export default function TicketModal({
       Object.values(copiedData).find((val: any) => val === "" || val === 0) ===
         undefined,
     );
-      setTimeout( () => {
-        saveToStorage();
-      },2000)
+    setTimeout(() => {
+      saveToStorage();
+    }, 2000);
   }, [formData]);
-  
- 
- 
+  const handleTicketStatus = (
+    constantLevel: Record<number, string>,
+    dateStatus: number,
+  ): string => {
+    if (dateStatus <= 5 && dateStatus >= 3) return constantLevel[5];
+    if (dateStatus <= 2 && dateStatus >= 1) return constantLevel[2];
+    if (dateStatus === 0) return constantLevel[0];
+
+    if (dateStatus > 5) return constantLevel["default"];
+    if (dateStatus < 0) return constantLevel["closed"];
+    else return "";
+  };
   useEffect(() => {
-    const description =localStorage.getItem(DESCRIPTION_NAME);
+    const description = localStorage.getItem(DESCRIPTION_NAME);
     if (modalDetails?.id) {
       setFormData({
         id: modalDetails.id,
@@ -144,11 +158,16 @@ export default function TicketModal({
         category_id: modalDetails.category_id,
         expiration_date: defaultDateFormat(modalDetails.expiration_date),
       });
+
+      const dateStatus = checkDayGap(modalDetails.expiration_date);
+      setTicketColorStatus(handleTicketStatus(TICKET_STATUS_LEVEL, dateStatus));
+      setTicketStatus(handleTicketStatus(TICKET_STATUS_LEVEL_NAME, dateStatus));
+      setTicketClosed( dateStatus < 0 )
     } else {
-      if(description){
-        setFormData( (prev) => ({ ...prev , description: description}))
+      if (description) {
+        setFormData((prev) => ({ ...prev, description: description }));
       }
-      setCanSubmit(true);
+      setTicketClosed(false)
     }
   }, [modalDetails]);
 
@@ -186,22 +205,32 @@ export default function TicketModal({
       closeState={setModalOpen}
       header={
         modalDetails?.title !== "" ? (
-          <div className="flex justify-start ">
+          <div className="flex justify-between px-2">
             <p className="font-medium text-2xl py-2 pl-2">
               {modalDetails?.title}
             </p>
+            <div className="badget flex items-center gap-2 opacity-90">
+              <span className={`text-${ticketColorStatus} font-medium`}>
+                {ticketStatus}
+              </span>
+              <span className={`rounded-full  h-3 w-3 bg-${ticketColorStatus}`}>
+                &nbsp;
+              </span>
+            </div>
           </div>
         ) : null
       }
       footer={
         <TicketModalFooter
           canSubmit={canSubmit}
+          removeSubmit={isTicketClosed}
           closeModal={closeModal}
           submitModal={handleSubmit}
         />
       }
       body={
         <TicketModalBody
+          isSubmitClosed={isTicketClosed}
           isModalOpen={isModalOpen}
           formData={formData}
           handleInput={handleInputs}

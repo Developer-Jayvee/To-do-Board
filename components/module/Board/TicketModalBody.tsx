@@ -6,6 +6,7 @@ import { ClockLoader } from "react-spinners";
 import type { TicketForm,  ModalBodyProps } from "types/globalTypes";
 export default function TicketModalBody({
   formData,
+  isSubmitClosed,
   handleInput,
   labelOptions,
   categoryOptions,
@@ -39,7 +40,7 @@ export default function TicketModalBody({
       <div className="inline--input col-span-2 sm:col-span-1">
         <label>Expiration Date </label>
         <InputDate
-          dateInput={formData.expiration_date}
+          dateInput={formData.id ? formData.expiration_date : undefined }
           readOnly={!!formData.id}
           key={formData.id}
           onChange={(val: string) => handleInput("expiration_date", val)}
@@ -50,7 +51,7 @@ export default function TicketModalBody({
         <SelectComponent
           list={categoryOptions}
           defaultKey={formData.category_id}
-          readOnly={false}
+          readOnly={isSubmitClosed}
           key={formData.id}
           defaultVal="Choose a category"
           onChange={(value: string) => handleInput("category_id", value)}
@@ -77,12 +78,13 @@ export default function TicketModalBody({
           onChange={(e) => handleInput("description", e.target.value)}
           rows={5}
           value={formData.description}
+          readOnly={isSubmitClosed}
           placeholder="Enter a description"
         ></textarea>
         <p
           className={`  text-xs flex justify-end mt-1 gap-2 text-gray-500 
                         transition-opacity duration-200 ease-in-out
-                        ${formData.description == "" && formData.id == undefined ? "hidden opacity-0" : "opacity-100"}`}
+                        ${formData.description == "" && formData.id == undefined || isSubmitClosed ? "hidden opacity-0" : "opacity-100"}`}
         >
           <CheckCircle />
           Save as draft

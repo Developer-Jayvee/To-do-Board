@@ -16,7 +16,9 @@ import { ClipLoader, ClockLoader, SyncLoader } from "react-spinners";
 import { setLoading } from "store/module/ModuleSlice";
 import Loader from "components/ui/Loader";
 import AlertModal from "components/ui/AlertModal";
-
+import { toast, ToastContainer } from "react-toastify";
+import { notif } from "utils/toast.util";
+import { turnOffNotif } from "store/auth/AuthSlice";
 
 
 export const TicketContext = createContext(null);
@@ -24,6 +26,7 @@ export const ModalContentContext = createContext(null);
 const BoardPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const categories = useSelector(getAllTickets);
+  const auth = useSelector( (state : RootState) => state.auth);
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const [isLoaded, setLoaded] = useState<boolean>(false);
   const [formData, setFormData] = useState<TicketFormTypes>(BasicTicketForm);
@@ -33,6 +36,8 @@ const BoardPage = () => {
   const [provider, setProvider] = useState({
     category: {},
   });
+  const boardRed = useRef(null)
+  const hasNotifAlready = useRef<boolean | null>(null);
   const handleTicketOpen = (id: number, catID: number) => {
     const ticketDetails = categories
       .find((category: any) => category.id === catID)
@@ -92,11 +97,19 @@ const BoardPage = () => {
     const childrenNode = parentNode.querySelectorAll(".ticket-card");
     childrenNode.forEach((child) => child.classList.remove("opacity-1"));
   };
-
+  const ticketExpirationNotif = () => {
+    if(hasNotifAlready.current) return;
+     if(auth.notif && auth.hasNotif){
+      if(auth.notif.soon) notif.info(`${auth.notif.soon} Ticket will expire soon `)
+      if(auth.notif.today) notif.error(`${auth.notif.today} Ticket will expire today`);
+        dispatch(turnOffNotif());
+    }
+    hasNotifAlready.current = true;
+  }
   useEffect(() => {
-    dispatch(fetchTickets()).finally(() => setLoaded(true));
+    dispatch(fetchTickets()).finally(() => setLoaded(true)); 
   }, [dispatch]);
-
+ 
   useEffect(() => {
     getAllList(false).finally(() => {
       setProvider((prev) => ({
@@ -112,10 +125,10 @@ const BoardPage = () => {
       setCurrentID(null);
     }
   }, [isModalOpen]);
- 
+  ticketExpirationNotif()
   return (
     <>
-      <div className="grid grid-cols-1 gap-4 relative">
+      <div className="grid grid-cols-1 gap-4 relative" ref={boardRed}>
         <div className="filters">
           <button
             className="filter-btn btn-success cursor-pointer"
@@ -174,6 +187,7 @@ const BoardPage = () => {
         />
       </div>
       <Loader />
+    
     </>
   );
 };

@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { type RootState } from "store";
 import { Link, redirect } from "react-router";
 import Swal from "sweetalert2";
+import { setLoading } from "store/module/ModuleSlice";
 
 const LoginPage = () => {
   const authState = useSelector((state: RootState) => state.auth);
@@ -36,13 +37,16 @@ const LoginPage = () => {
     })
     .then(async (result) => {
       if(result.isConfirmed){
+        dispatch(setLoading(true));
         const formData = new FormData(self);
         const response = await authApi.login({
           username: formData.get("username") as string,
           password: formData.get("password") as string,
         }).then( (result) => {
+          dispatch(setLoading(false));
           dispatch({ type: "auth/loginSuccess", payload: result });
         }).catch( (error) => {
+          dispatch(setLoading(false));
           Swal.fire({
             title:`${error.message ?? 'Error occured while saving'} `,
             icon:"warning",
@@ -57,7 +61,7 @@ const LoginPage = () => {
         
 
       }
-    })
+    }).catch( (err) => dispatch(setLoading(false)))
   
   };
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {

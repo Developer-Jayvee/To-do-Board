@@ -78,6 +78,7 @@ export type TicketFormPartial = Partial<TicketFormTypes>
 
 export interface ModalContentActions {
   isUpdate ?: boolean;
+  removeSubmit ?: boolean;
   canSubmit ?: boolean;
   submitModal ?: (e : FormEvent) => void;
   closeModal ?: () => void;
@@ -160,6 +161,7 @@ export type ListTypes = {
 
 export interface ModalBodyProps {
   handleInput: (name: string, value: string) => void;
+  isSubmitClosed ?: boolean;
   formData: TicketForm;
   labelOptions: { key: string; value: string }[];
   categoryOptions: { key: string; value: string }[];

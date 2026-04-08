@@ -42,7 +42,7 @@ export default function BoardColumn({
       </div>
       <div
         id={divID || ""}
-        className="ticket-list flex flex-col gap-2 px-2 rounded-2xl"
+        className="ticket-list flex flex-col gap-5 px-2 rounded-2xl"
       >
         {children || ""}
       </div>

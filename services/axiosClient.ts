@@ -3,7 +3,7 @@ import { axiosInterceptors } from "./axiosInterceptors";
 
 const axiosClient = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
-  timeout: 1000,
+  timeout: 15000,
   headers: {
     Accept: "application/json",
   },

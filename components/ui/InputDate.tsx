@@ -31,6 +31,7 @@ export default function InputDate({
   onChange,
 }: InputDateProps) {
   const now = new Date();
+  
   const dateListCallBack = useCallback(
     (year: number, month: number) => getAllDaysInMonth(year, month),
     [],
@@ -74,10 +75,16 @@ export default function InputDate({
     });
   };
   useEffect(() => {
+    
     if (dateInput) {
       const dateGiven = new Date(dateInput);
       setDateDetails({
         month: dateGiven.getMonth(),
+        year: dateGiven.getFullYear(),
+        date: dateGiven.getDate(),
+      });
+       setSelectedDate({
+        month: dateGiven.getMonth() + 1,
         year: dateGiven.getFullYear(),
         date: dateGiven.getDate(),
       });
@@ -102,7 +109,7 @@ export default function InputDate({
           className={`input-display ${isReadOnly ? "cursor-not-allowed" : "cursor-pointer"}`}
         >
           <p>
-            {selectedDate.month}/{selectedDate.date}/{selectedDate.year}
+            {selectedDate.month }/{selectedDate.date}/{selectedDate.year}
           </p>
         </div>
       </div>

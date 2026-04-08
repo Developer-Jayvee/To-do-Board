@@ -5,9 +5,11 @@ import { createContext, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate, Outlet, useLocation, useParams } from "react-router";
 import { ClockLoader } from "react-spinners";
+import { toast, ToastContainer } from "react-toastify";
 import { Routes } from "src/constants/routePaths";
 import type { AppDispatch, RootState } from "store";
-import { isUserAuthenticated } from "store/auth/AuthSlice";
+import { isUserAuthenticated, turnOffNotif } from "store/auth/AuthSlice";
+import { notif } from "utils/toast.util";
 
 export default function AuthLayout() {
   const location = useLocation();
@@ -16,14 +18,23 @@ export default function AuthLayout() {
   const auth = useSelector((state : RootState) => state.auth);
   const [isSideBarOpen ,setSideBarOpen] = useState<boolean>(false);
   const [windowWidth , setWindowWidth] = useState<number | null>(null);
+  const [isLoading ,setLoading] = useState(true);
   const dispatch = useDispatch<AppDispatch>();
 
+  
   useEffect(() => {
-    dispatch({ type: "auth/checkIfAuthenticated" });
+    const checkAuth = async () => {
+        return dispatch({ type: "auth/checkIfAuthenticated" });
+    }
+    checkAuth()
+    
   }, [dispatch]);
 
+    
 
   useEffect( () => {
+    
+    setLoading(false)
     if(typeof window !== undefined){
       setWindowWidth(window.innerWidth)
     }
@@ -32,18 +43,16 @@ export default function AuthLayout() {
    }
     window.addEventListener('resize',handleWindowWidth)
   },[])
-  useEffect( () => {
-    if(windowWidth && windowWidth > 450){
-      // setSideBarOpen(true)
-    }
-    
-  },[windowWidth])
-  if(windowWidth === null){
+
+
+  if(windowWidth === null || isLoading ){
     return <div className="flex justify-center items-center h-full"><ClockLoader color="black" className=""/></div>
   }
    if(!isAuthenticated){
     return <Navigate to="/" replace />
   }
+
+  
   
   return (
     <>
