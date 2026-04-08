@@ -76,12 +76,14 @@ export interface CategoryReturnForm extends TimeStamps {
 
 export type TicketFormPartial = Partial<TicketFormTypes>
 
-
 export interface ModalContentActions {
-    isUpdate ?: boolean;
-    canSubmit ?: boolean;
-    submitModal ?: (e : FormEvent) => void;
-    closeModal ?: () => void;
+  isUpdate ?: boolean;
+  canSubmit ?: boolean;
+  submitModal ?: (e : FormEvent) => void;
+  closeModal ?: () => void;
+}
+export interface ModalFooter extends ModalContentActions {
+  currentID : number | null | undefined;
 }
 export interface ModalContentProps extends ModalContentActions{
     currentID ?: number | null;

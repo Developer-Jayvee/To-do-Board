@@ -1,5 +1,6 @@
 import InputDate from "components/ui/InputDate";
 import SelectComponent from "components/ui/Select";
+import { CheckCircle } from "iconoir-react";
 import type { ModalBodyProps } from "types/globalTypes";
 export default function TicketModalBody({
   formData,
@@ -12,7 +13,6 @@ export default function TicketModalBody({
       <div
         className={`inline--input col-span-2 ${formData.id ? "hidden" : ""} `}
       >
-       
         <input
           readOnly={!!formData.id}
           value={formData.title}
@@ -40,7 +40,7 @@ export default function TicketModalBody({
           readOnly={false}
           key={formData.id}
           defaultVal="Choose a category"
-          onChange={(value: string) => handleInput('category_id', value)}
+          onChange={(value: string) => handleInput("category_id", value)}
         />
       </div>
       <div className="inline--input  col-span-2 sm:col-span-1">
@@ -51,7 +51,7 @@ export default function TicketModalBody({
           readOnly={!!formData.id}
           key={formData.id}
           defaultVal="Choose a label"
-          onChange={(value: string) => handleInput('label_id', value)}
+          onChange={(value: string) => handleInput("label_id", value)}
         />
       </div>
       <div className="inline--input  col-span-2 sm:col-span-1"> &nbsp; </div>
@@ -59,7 +59,6 @@ export default function TicketModalBody({
       <div className="inline--input col-span-2 flex flex-col">
         <label className="mb-2">Description</label>
         <textarea
-          readOnly={!!formData.id}
           className=" border border-gray-300"
           name="description"
           onChange={(e) => handleInput("description", e.target.value)}
@@ -67,6 +66,14 @@ export default function TicketModalBody({
           value={formData.description}
           placeholder="Enter a description"
         ></textarea>
+        <p
+          className={`  text-xs flex justify-end mt-1 gap-2 text-gray-500 
+                        transition-opacity duration-200 ease-in-out
+                        ${formData.description == "" && formData.id == undefined ? "hidden opacity-0" : "opacity-100"}`}
+        >
+          <CheckCircle />
+          Save as draft
+        </p>
       </div>
     </div>
   );
