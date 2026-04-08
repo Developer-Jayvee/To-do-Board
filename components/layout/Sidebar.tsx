@@ -45,7 +45,7 @@ export default function Sidebar({ customClass = ""  , isSideBarOpen}: SidebarPro
                   <span className="align-middle hidden md:inline-block">Board</span>
                 </Link>
               </li>
-              <li
+              {/* <li
                 className={`w-full ${location.pathname === "/history" ? activeLink : ""} py-2`}
               >
                 <Link
@@ -56,7 +56,7 @@ export default function Sidebar({ customClass = ""  , isSideBarOpen}: SidebarPro
                   <Clock className=" mr-2" />
                   <span className="align-middle  hidden md:inline-block">History / Activity</span>
                 </Link>
-              </li>
+              </li> */}
             </ul>
           </li>
           <li className="w-full mt-2">

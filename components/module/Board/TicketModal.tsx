@@ -1,11 +1,16 @@
 import TicketModalBody from "components/module/Board/TicketModalBody";
-import "./modalContent.css"
+import "./modalContent.css";
 import Modal from "components/ui/Modal";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BasicTicketForm } from "src/constants/initialStates";
 import { type AppDispatch, type RootState } from "store";
-import { createTicket, fetchTickets, getAllTickets, updateTicket } from "store/tickets/TicketSlice";
+import {
+  createTicket,
+  fetchTickets,
+  getAllTickets,
+  updateTicket,
+} from "store/tickets/TicketSlice";
 import type {
   ModalContentProps,
   TicketForm,
@@ -13,7 +18,8 @@ import type {
 } from "types/globalTypes";
 import { defaultDateFormat } from "utils/utilities";
 import TicketModalFooter from "components/module/Board/TicketModalFooter";
-import Swal from "sweetalert2"
+import Swal from "sweetalert2";
+import { DESCRIPTION_NAME } from "src/constants";
 export default function TicketModal({
   currentID,
   isModalOpen,
@@ -21,51 +27,50 @@ export default function TicketModal({
   setModalOpen,
   labelList,
   categoryList,
-}: ModalContentProps){
+}: ModalContentProps) {
   const dispatch = useDispatch<AppDispatch>();
-  const { loading } = useSelector( (state : RootState) => state.ticket)
+  const { loading } = useSelector((state: RootState) => state.ticket);
   const [optionLabel, setOptionLabel] = useState<ListTypes[]>([]);
   const [optionCategory, setOptionCategory] = useState<ListTypes[]>([]);
   const [formData, setFormData] = useState<TicketForm>(BasicTicketForm);
   const [canSubmit, setCanSubmit] = useState<boolean>(false);
+  const descriptionChanges = useRef<string | null>(null);
   const handleSubmit = async () => {
-      Swal.fire({
-        icon: "warning",
-        title: "Are you sure you want to proceed" ,
-        showCancelButton: true,
-      }).then( (result) => {
-          if(result.isConfirmed){
-            const dispatchAction = currentID
-              ? dispatch(updateTicket({ id: currentID, data: formData }))
-              : dispatch(createTicket(formData));
-            
-            Swal.fire({
-              icon:"success",
-              title:"Successfully saved",
-              timer:1000
-            }).then( () => {
-              dispatchAction
-              .unwrap()
-              .then( () => {
-                setModalOpen(false);
-                setFormData(BasicTicketForm);
-              })
-              .catch( (error) => {
-                Swal.fire({
-                  icon:"error",
-                  title:"Error occured while saving"
-                })
-              })
+    Swal.fire({
+      icon: "warning",
+      title: "Are you sure you want to proceed",
+      showCancelButton: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const dispatchAction = currentID
+          ? dispatch(updateTicket({ id: currentID, data: formData }))
+          : dispatch(createTicket(formData));
 
+        Swal.fire({
+          icon: "success",
+          title: "Successfully saved",
+          timer: 1000,
+        }).then(() => {
+          removeFromStorage()
+          dispatchAction
+            .unwrap()
+            .then(() => {
+              setModalOpen(false);
+              setFormData(BasicTicketForm);
             })
-
-          }
-      })
- 
+            .catch((error) => {
+              Swal.fire({
+                icon: "error",
+                title: "Error occured while saving",
+              });
+            });
+        });
+      }
+    });
   };
-  
+
   const handleInputs = (name: string, value: string | number) => {
-    if(name === "category_id"){
+    if (name === "category_id") {
     }
     setFormData((prev) => ({
       ...prev,
@@ -74,22 +79,62 @@ export default function TicketModal({
   };
 
   const closeModal = () => {
-    setModalOpen(false);
-    setFormData(BasicTicketForm);
+    if (
+      formData.category_id ||
+      formData.description !== "" ||
+      formData.label_id ||
+      formData.title !== ""
+    ) {
+      Swal.fire({
+        title: "Are you sure you want to leave?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Yes",
+        cancelButtonText: "No",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          setModalOpen(false);
+          setFormData(BasicTicketForm);
+          removeFromStorage();
+        }
+      });
+    } else {
+      setModalOpen(false);
+      setFormData(BasicTicketForm);
+      removeFromStorage();
+    }
+    
   };
-
-  
-  useEffect( () => {
-    const copiedData = {...formData};
+  const saveToStorage = () => {
+    if(formData.description === ""){
+      return removeFromStorage()
+    }
+    const desc = formData.description;
+    descriptionChanges.current = formData.description;
+    localStorage.setItem(DESCRIPTION_NAME,desc);
+  }
+  const removeFromStorage = () => {
+    if(localStorage.getItem(DESCRIPTION_NAME)){
+      descriptionChanges.current = null;
+      localStorage.removeItem(DESCRIPTION_NAME);
+    }
+  }
+  useEffect(() => {
+    const copiedData = { ...formData };
     delete copiedData.id;
     setCanSubmit(
-      Object.values( copiedData).find( (val : any) => val === "" || val === 0) === undefined
-    ) 
+      Object.values(copiedData).find((val: any) => val === "" || val === 0) ===
+        undefined,
+    );
+      setTimeout( () => {
+        saveToStorage();
+      },2000)
+  }, [formData]);
   
-  },[formData])
-
+ 
+ 
   useEffect(() => {
-    if (modalDetails) {
+    if (modalDetails?.id) {
       setFormData({
         id: modalDetails.id,
         title: modalDetails.title,
@@ -98,7 +143,13 @@ export default function TicketModal({
         category_id: modalDetails.category_id,
         expiration_date: defaultDateFormat(modalDetails.expiration_date),
       });
-    }else setCanSubmit(true)
+    } else {
+      const description =localStorage.getItem(DESCRIPTION_NAME);
+      if(description){
+        setFormData( (prev) => ({ ...prev , description: description}))
+      }
+      setCanSubmit(true);
+    }
   }, [modalDetails]);
 
   useEffect(() => {
@@ -128,18 +179,27 @@ export default function TicketModal({
     );
   }, [labelList, categoryList]);
 
- 
   return (
     <Modal
       size="L"
       isModalOpen={isModalOpen}
       closeState={setModalOpen}
-      header={modalDetails?.title !== "" ? ( 
-        <div className="flex justify-start ">
-            <p className="font-medium text-2xl py-2 pl-2">{modalDetails?.title}</p>
-        </div>
-      ) : null}
-      footer={(<TicketModalFooter canSubmit={canSubmit} closeModal={closeModal} submitModal={handleSubmit}/>)}
+      header={
+        modalDetails?.title !== "" ? (
+          <div className="flex justify-start ">
+            <p className="font-medium text-2xl py-2 pl-2">
+              {modalDetails?.title}
+            </p>
+          </div>
+        ) : null
+      }
+      footer={
+        <TicketModalFooter
+          canSubmit={canSubmit}
+          closeModal={closeModal}
+          submitModal={handleSubmit}
+        />
+      }
       body={
         <TicketModalBody
           formData={formData}
@@ -150,4 +210,4 @@ export default function TicketModal({
       }
     />
   );
-};
+}
