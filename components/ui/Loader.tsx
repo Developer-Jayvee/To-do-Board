@@ -7,7 +7,7 @@ export default function Loader() {
   const module = useSelector((state: RootState) => state.module);
   return (
     <div
-      className={`${module.isLoading ? "" : "hidden"} absolute border bottom-0 top-0 right-0 left-0  bg-black/50 inset-0 flex justify-center items-center`}
+      className={`${module.isLoading ? "" : "hidden"} absolute border bottom-0 top-0 right-0 left-0 z-99 bg-black/50 inset-0 flex justify-center items-center`}
     >
       <ClockLoader
         color="white"

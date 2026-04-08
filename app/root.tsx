@@ -9,9 +9,12 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import 'react-toastify/dist/ReactToastify.css';
+// import "../services/echo/index";
 import { Provider, useSelector } from "react-redux";
 import store, { type RootState } from "../store/index";
 import { ClipLoader, ClockLoader } from "react-spinners";
+import { ToastContainer } from "react-toastify";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "To Do Board" }, { name: "description", content: "" }];
@@ -33,6 +36,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           {children}
         
         </Provider>
+        <ToastContainer/>
         <ScrollRestoration />
         <Scripts />
       </body>

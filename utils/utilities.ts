@@ -46,3 +46,9 @@ export function checkPasswordStrength(query : string) {
     let score = checks.reduce((acc, rgx : RegExp) => acc + Number(rgx.test(query)), 0);
     return score;
 }
+
+export function checkDayGap(dateToCheck: string, gap: number = 5): number {
+  const diffInMs = new Date(dateToCheck).getTime() - new Date().getTime();
+  const diffInDays = Math.ceil(diffInMs / (1000 * 60 * 60 * 24));
+  return diffInDays;
+}
