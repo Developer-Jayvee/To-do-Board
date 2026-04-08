@@ -1,4 +1,5 @@
 import type { CategoryReturnForm } from "types/globalTypes";
+import { defaultDateFormat } from "utils/utilities";
 
 export const BasicTicketForm = {
   id : undefined,
@@ -6,7 +7,7 @@ export const BasicTicketForm = {
   description: "",
   label_id: 0,
   category_id:0,
-  expiration_date: new Date().toDateString(),
+  expiration_date: defaultDateFormat(new Date().toDateString()),
   created_by: 1
 };
 export const inititalCategoryReturnState: CategoryReturnForm[] = [
