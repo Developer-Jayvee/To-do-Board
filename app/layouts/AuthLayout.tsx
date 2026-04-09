@@ -1,10 +1,10 @@
 import Navbar from "components/layout/Navbar";
 import Sidebar from "components/layout/Sidebar";
-import Loader from "components/ui/Loader";
+
 import { createContext, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate, Outlet, useLocation, useParams } from "react-router";
-import { ClockLoader } from "react-spinners";
+
 import { toast, ToastContainer } from "react-toastify";
 import { Routes } from "src/constants/routePaths";
 import type { AppDispatch, RootState } from "store";
@@ -46,7 +46,7 @@ export default function AuthLayout() {
 
 
   if(windowWidth === null || isLoading ){
-    return <div className="flex justify-center items-center h-full"><ClockLoader color="black" className=""/></div>
+    return <div className="flex justify-center items-center h-full"></div>
   }
    if(!isAuthenticated){
     return <Navigate to="/" replace />

@@ -2,7 +2,7 @@ import InputDate from "components/ui/InputDate";
 import SelectComponent from "components/ui/Select";
 import { CheckCircle } from "iconoir-react";
 import { useEffect, useRef, useState } from "react";
-import { ClockLoader } from "react-spinners";
+// import { ClockLoader } from "react-spinners";
 import type { TicketForm,  ModalBodyProps } from "types/globalTypes";
 export default function TicketModalBody({
   formData,
@@ -19,7 +19,7 @@ export default function TicketModalBody({
   },[isModalOpen])
 
   if(!isLoading){
-    return <ClockLoader color="black" size={30}/>
+    // return <ClockLoader color="black" size={30}/>
   }
  
   return (

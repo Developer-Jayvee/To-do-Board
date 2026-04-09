@@ -5,7 +5,6 @@ import {
   WarningTriangle,
 } from "iconoir-react";
 import Modal from "./Modal";
-import { ClipLoader } from "react-spinners";
 import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import type { Size, AlertType } from "../../types/globalTypes"
 

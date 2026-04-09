@@ -12,7 +12,7 @@ import type { AlertStatusProps, AlertType, TicketFormTypes } from "types/globalT
 import { BasicTicketForm } from "src/constants/initialStates";
 import { useConfigHandlers } from "src/hooks/useConfigHandlers";
 import TicketModal from "components/module/Board/TicketModal";
-import { ClipLoader, ClockLoader, SyncLoader } from "react-spinners";
+// import { ClipLoader, ClockLoader, SyncLoader } from "react-spinners";
 import { setLoading } from "store/module/ModuleSlice";
 import Loader from "components/ui/Loader";
 import AlertModal from "components/ui/AlertModal";
@@ -143,9 +143,9 @@ const BoardPage = () => {
         <div className="board-container flex no-wrap gap-5">
           {!isLoaded ? (
               <div className="flex flex-1 justify-center">
-                  <SyncLoader 
+                  {/* <SyncLoader 
                     color="black"
-                  />
+                  /> */}
               </div>
           ) : (
             <TicketContext.Provider value={provider}>
