@@ -13,7 +13,6 @@ import 'react-toastify/dist/ReactToastify.css';
 // import "../services/echo/index";
 import { Provider, useSelector } from "react-redux";
 import store, { type RootState } from "../store/index";
-import { ClipLoader, ClockLoader } from "react-spinners";
 import { ToastContainer } from "react-toastify";
 
 export function meta({}: Route.MetaArgs) {
