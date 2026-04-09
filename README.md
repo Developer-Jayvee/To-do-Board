@@ -8,7 +8,18 @@ Before you begin, ensure you have the following installed:
 - [Node.js](https://nodejs.org/) (version 16 or higher)
 - [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
 
+
+### Configure Environment
+Change the url if you are not using docker
+```bash
+cp .env.example .env
+```
+
+# IF NOT USING DOCKER
+
 ## Installation
+
+
 
 ### 1. Clone the Repository
 
@@ -27,10 +38,7 @@ npm install
 yarn install
 
 ```
-### 3. Configure Environment (Optional)
-```bash
-cp .env.example .env
-```
+
 
 ## Running the Application
 Development Mode
