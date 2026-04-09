@@ -6,11 +6,18 @@ export const HAS_NOTIF = "hasNotif";
 export const DAY_LIST = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
 export const MONTH_LIST = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sept","Oct","Nov","Dec"];
 export const TICKET_STATUS_LEVEL = {
-    5: 'yellow-300',
-    2: 'orange-400',
-    0 : 'red-600',
-    'default' : 'greem-500',
-    'closed' : 'black'
+    5: 'bg-yellow-300',
+    2: 'bg-orange-400',
+    0 : 'bg-red-600',
+    'default' : 'bg-green-500',
+    'closed' : 'bg-black'
+}
+export const TICKET_STATUS_LEVEL_TXT = {
+    5: 'text-yellow-300',
+    2: 'text-orange-400',
+    0 : 'text-red-600',
+    'default' : 'text-green-500',
+    'closed' : 'text-black'
 }
 export const TICKET_STATUS_LEVEL_NAME = {
     5 : 'Expiring Soon',

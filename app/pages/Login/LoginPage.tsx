@@ -11,6 +11,8 @@ import { type RootState } from "store";
 import { Link, redirect } from "react-router";
 import Swal from "sweetalert2";
 import { setLoading } from "store/module/ModuleSlice";
+import { checkNotif } from "services/modules/notifApi";
+import { notif } from "utils/toast.util";
 
 const LoginPage = () => {
   const authState = useSelector((state: RootState) => state.auth);
@@ -26,6 +28,13 @@ const LoginPage = () => {
       formData.username.trim() !== "" && formData.password.trim() !== "",
     );
   }, [formData]);
+  const ticketExpirationNotif = async () => {
+        const hasNotif  = await checkNotif();
+        if(hasNotif){
+            if(hasNotif.soon) notif.warning(`Reminder: You have ${hasNotif.soon} ticket will expire soon.`)
+            if(hasNotif.today) notif.error(`Reminder: You have ${hasNotif.today} ticket that will expire today.`);
+        }
+  }
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const self = e.currentTarget;
@@ -45,10 +54,13 @@ const LoginPage = () => {
         }).then( (result) => {
           dispatch(setLoading(false));
           dispatch({ type: "auth/loginSuccess", payload: result });
+          setTimeout(()=>{
+            ticketExpirationNotif()
+          },4000) 
         }).catch( (error) => {
           dispatch(setLoading(false));
           Swal.fire({
-            title:`${error.message ?? 'Error occured while saving'} `,
+            title:`Failed to login. Please try again later. `,
             icon:"warning",
             timer:2000
           })

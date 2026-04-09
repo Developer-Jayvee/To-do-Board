@@ -23,6 +23,7 @@ import {
   DESCRIPTION_NAME,
   TICKET_STATUS_LEVEL,
   TICKET_STATUS_LEVEL_NAME,
+  TICKET_STATUS_LEVEL_TXT,
 } from "src/constants";
 export default function TicketModal({
   currentID,
@@ -40,6 +41,7 @@ export default function TicketModal({
   const [canSubmit, setCanSubmit] = useState<boolean>(false);
   const [isTicketClosed , setTicketClosed] = useState<boolean>(false);
   const [ticketColorStatus, setTicketColorStatus] = useState("bg-green-500");
+  const [ticketStatusTextColor,setTicketStatusTextColor] = useState("text-green-500");
   const [ticketStatus, setTicketStatus] = useState("Good");
   const handleSubmit = async () => {
     Swal.fire({
@@ -161,6 +163,7 @@ export default function TicketModal({
 
       const dateStatus = checkDayGap(modalDetails.expiration_date);
       setTicketColorStatus(handleTicketStatus(TICKET_STATUS_LEVEL, dateStatus));
+      setTicketStatusTextColor(handleTicketStatus(TICKET_STATUS_LEVEL_TXT, dateStatus));
       setTicketStatus(handleTicketStatus(TICKET_STATUS_LEVEL_NAME, dateStatus));
       setTicketClosed( dateStatus < 0 )
     } else {
@@ -210,10 +213,10 @@ export default function TicketModal({
               {modalDetails?.title}
             </p>
             <div className="badget flex items-center gap-2 opacity-90">
-              <span className={`text-${ticketColorStatus} font-medium`}>
+              <span className={`${ticketStatusTextColor} font-medium`}>
                 {ticketStatus}
               </span>
-              <span className={`rounded-full  h-3 w-3 bg-${ticketColorStatus}`}>
+              <span className={`rounded-full  h-3 w-3 ${ticketColorStatus}`}>
                 &nbsp;
               </span>
             </div>

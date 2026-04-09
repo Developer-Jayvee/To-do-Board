@@ -18,11 +18,12 @@ export default function Ticket({ id, details, onOpen }: TicketProps) {
     e.dataTransfer.setData("ticketID", divID);
     e.dataTransfer.setData("ticketInfo", JSON.stringify(details));
   };
-  const [ticketStatus , setTicketStatus] = useState("green-500");
+  const [ticketStatus , setTicketStatus] = useState("bg-green-500");
   const dateStatus = useRef(checkDayGap(expiration_date));
   const ticketRef = useRef(null)
 
   const handleTicketStatus = ( dateStatus : number) : string => {
+    
     if(dateStatus <= 5 && dateStatus >= 3) return TICKET_STATUS_LEVEL[5];
     if(dateStatus <= 2 && dateStatus >= 1) return TICKET_STATUS_LEVEL[2];
     if(dateStatus === 0) return TICKET_STATUS_LEVEL[0];
@@ -33,10 +34,11 @@ export default function Ticket({ id, details, onOpen }: TicketProps) {
   }
  
   useEffect( () => {
-    if(dateStatus.current){
-      setTicketStatus(handleTicketStatus(dateStatus.current))
+    if(expiration_date){
+      
+      setTicketStatus(handleTicketStatus(checkDayGap(expiration_date)))
     }
-  }, [dateStatus.current])
+  }, [expiration_date])
   return (
     <div
       ref={ticketRef}
@@ -51,7 +53,7 @@ export default function Ticket({ id, details, onOpen }: TicketProps) {
       <div className="ticket-header grid grid-cols-[1fr_70px] ">
         <span className=" text-gray-500 text-sm mb-2 flex items-center gap-2">
           {" "}
-          <div className={`w-3 h-3  rounded-full bg-${ticketStatus}`}></div>{" "}
+          <div className={`w-3 h-3  rounded-full ${ticketStatus}`}></div>{" "}
           {category?.title}{" "}
         </span>
         <span
